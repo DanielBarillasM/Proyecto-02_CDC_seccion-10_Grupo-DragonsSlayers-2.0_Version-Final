@@ -109,7 +109,7 @@ export function analyzeInput(
   } else if (!syntaxAccepted) {
     semantic = emptySemanticResult(
       "skipped",
-      "El análisis semántico se omitió porque el programa tiene errores léxicos o sintácticos previos."
+      "Análisis semántico omitido: el programa tiene errores léxicos o sintácticos."
     );
   } else {
     semantic = runSemanticPhase(tree);
@@ -122,9 +122,9 @@ export function analyzeInput(
         mode === "tac" ? "skipped" : "not-requested",
         mode === "tac"
           ? lexicalErrors.length > 0 || syntaxErrors.length > 0
-            ? "El código intermedio no se generó porque existen errores léxicos o sintácticos."
+            ? "Código intermedio no generado: el programa tiene errores léxicos o sintácticos."
             : semantic.errors.length > 0
-              ? "El código intermedio no se generó porque existen errores semánticos."
+              ? "Código intermedio no generado: el programa tiene errores semánticos."
               : "La generación TAC requiere un programa válido."
           : undefined
       );
@@ -270,15 +270,14 @@ function buildLexerExplanation(
     return (
       `El archivo fue analizado correctamente por el lexer de Compiscript. ` +
       `Se reconocieron ${tokenCount} token${tokenCount === 1 ? "" : "s"} sin errores léxicos. ` +
-      `El parser no se ejecutó en el modo de análisis exclusivamente léxico.`
+      `El parser no se ejecutó en este modo.`
     );
   }
 
   const first = lexicalErrors[0];
   return (
     `El archivo contiene errores léxicos de Compiscript. ` +
-    `Se encontraron ${lexicalErrors.length} error${lexicalErrors.length === 1 ? "" : "es"} léxico${lexicalErrors.length === 1 ? "" : "s"}. ` +
-    `El primero está en línea ${first.line}, columna ${first.column}: ${first.message}.`
+    `El primero de ${lexicalErrors.length} está en línea ${first.line}, columna ${first.column}: ${first.message}.`
   );
 }
 
@@ -322,7 +321,7 @@ function buildExplanation(
     if (semantic && semantic.status === "completed") {
       return (
         `El archivo Compiscript fue analizado correctamente en las fases léxica, sintáctica y semántica. ` +
-        `Se reconocieron ${tokenCount} token${tokenCount === 1 ? "" : "s"}, se registraron ${semantic.metrics.symbolCount} símbolo${semantic.metrics.symbolCount === 1 ? "" : "s"} en ${semantic.metrics.scopeCount} ámbito${semantic.metrics.scopeCount === 1 ? "" : "s"}, y no se encontraron errores semánticos${semantic.warnings.length > 0 ? ` (se emitieron ${semantic.warnings.length} advertencia${semantic.warnings.length === 1 ? "" : "s"})` : ""}.`
+        `Se reconocieron ${tokenCount} token${tokenCount === 1 ? "" : "s"} y ${semantic.metrics.symbolCount} símbolo${semantic.metrics.symbolCount === 1 ? "" : "s"} en ${semantic.metrics.scopeCount} ámbito${semantic.metrics.scopeCount === 1 ? "" : "s"}, sin errores semánticos${semantic.warnings.length > 0 ? ` (${semantic.warnings.length} advertencia${semantic.warnings.length === 1 ? "" : "s"})` : ""}.`
       );
     }
     return (
@@ -334,7 +333,7 @@ function buildExplanation(
   if (semantic && semantic.status === "completed" && semantic.errors.length > 0 && lexicalErrors.length === 0 && syntaxErrors.length === 0) {
     const first = semantic.errors[0];
     return (
-      `El archivo Compiscript es léxica y sintácticamente válido, pero contiene ${semantic.errors.length} error${semantic.errors.length === 1 ? "" : "es"} semántico${semantic.errors.length === 1 ? "" : "s"}. ` +
+      `El archivo Compiscript es léxica y sintácticamente válido, pero tiene ${semantic.errors.length} error${semantic.errors.length === 1 ? "" : "es"} semántico${semantic.errors.length === 1 ? "" : "s"}. ` +
       `Primer error semántico (${first.code}) en línea ${first.line}, columna ${first.column}: ${first.message}.`
     );
   }
