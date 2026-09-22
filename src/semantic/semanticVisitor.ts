@@ -1256,7 +1256,7 @@ class SemanticAnalyzer extends AbstractParseTreeVisitor<SemanticTreeNode> implem
 
     const merged = commonType(elements.map((e) => e.type));
     if (!merged) {
-      this.report("SEM017", "error", loc, "Los elementos del arreglo tienen tipos incompatibles entre sí.");
+      this.report("SEM017", "error", loc, "Los elementos del arreglo tienen tipos incompatibles.");
     }
     const elementType = merged ?? T.error;
     const arrayType = T.array(elementType);
