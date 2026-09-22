@@ -74,8 +74,8 @@ export function ParseTreePanel({ result }: ParseTreePanelProps) {
       )}
 
       <p className="text-xs text-muted-foreground">
-        <strong className="text-foreground">Análisis sintáctico de Compiscript:</strong> ANTLR genera el parser a partir de
-        Compiscript.g4 y produce este árbol incluso cuando debe recuperarse de errores sintácticos.
+        <strong className="text-foreground">Análisis sintáctico de Compiscript:</strong> ANTLR genera el parser desde
+        Compiscript.g4. El árbol aparece incluso cuando el parser se recupera de errores sintácticos.
       </p>
     </div>
   );

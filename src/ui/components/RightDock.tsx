@@ -44,7 +44,7 @@ function TacInspector({ result }: { result: AnalyzeResult }) {
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <p className="text-sm font-head uppercase tracking-wide">Código de tres direcciones</p>
-          <p className="mt-1 text-xs text-muted-foreground">Inspecciona, filtra y exporta la representación intermedia.</p>
+          <p className="mt-1 text-xs text-muted-foreground">Filtra y exporta las instrucciones TAC.</p>
         </div>
         <div className="flex gap-1">
           <button disabled={result.tac.status !== "completed"} className="rounded border bg-primary px-2 py-1 text-[11px] font-semibold shadow-xs disabled:opacity-40" onClick={() => downloadText("compiscript.tac", result.tac.formattedCode)}>Descargar TAC</button>
