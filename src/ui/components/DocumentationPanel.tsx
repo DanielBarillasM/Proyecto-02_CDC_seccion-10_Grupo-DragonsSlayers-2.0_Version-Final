@@ -31,8 +31,8 @@ export function DocumentationPanel() {
           <p className="text-sm">
             <code>generator.ts</code> recorre los contextos tipados de ANTLR y descompone expresiones en
             instrucciones de tres direcciones. Conserva cortocircuito, temporales reutilizables, etiquetas,
-            llamadas, arreglos, objetos, clases, closures y flujo de control. La tabla de símbolos se amplía
-            con almacenamiento abstracto y cada función o método obtiene un registro de activación.
+            llamadas, arreglos, objetos, clases, closures y flujo de control. Amplía la tabla de símbolos con
+            almacenamiento abstracto y asigna un registro de activación a cada función o método.
           </p>
         </AccordionContent>
       </AccordionItem>
@@ -43,8 +43,8 @@ export function DocumentationPanel() {
           <p className="text-sm">
             <code>declarationVisitor.ts</code> realiza la recolección inicial de clases, herencia, campos y firmas de
             métodos. <code>semanticVisitor.ts</code> recorre el CST válido, consulta <code>ScopeManager</code>, aplica{" "}
-            <code>typeSystem.ts</code>, produce diagnósticos estables y construye el árbol semántico anotado.{" "}
-            <code>flowAnalysis.ts</code> cubre retornos y código inalcanzable.
+            <code>typeSystem.ts</code>. Produce diagnósticos estables y construye el árbol semántico anotado.{" "}
+            <code>flowAnalysis.ts</code> detecta retornos faltantes y código inalcanzable.
           </p>
         </AccordionContent>
       </AccordionItem>
