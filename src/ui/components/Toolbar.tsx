@@ -56,7 +56,7 @@ export function Toolbar({ isRunning, isEmpty, onAnalyze, onReset, result, theme,
           <AlertDialogHeader>
             <AlertDialogTitle>Restablecer entrada</AlertDialogTitle>
             <AlertDialogDescription>
-              Se perderá el código actual y se volverá al caso de ejemplo "Entrada válida".
+              Se perderá el código actual y se cargará el ejemplo "Entrada válida".
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

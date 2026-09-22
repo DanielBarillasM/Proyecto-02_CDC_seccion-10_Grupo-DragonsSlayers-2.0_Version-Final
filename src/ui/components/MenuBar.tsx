@@ -100,7 +100,7 @@ export function MenuBar({
           <MenubarTrigger>Ejecutar</MenubarTrigger>
           <MenubarContent>
             <MenubarItem onClick={onAnalyze} disabled={isEmpty || isRunning}>
-              <Play size={14} /> Ejecutar análisis
+              <Play size={14} /> Analizar
               <MenubarShortcut>Ctrl+Enter</MenubarShortcut>
             </MenubarItem>
           </MenubarContent>

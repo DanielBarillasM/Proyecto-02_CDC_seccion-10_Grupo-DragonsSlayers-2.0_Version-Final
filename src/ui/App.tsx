@@ -107,7 +107,7 @@ export function App() {
       if (message.includes("Cannot find module") || message.includes("generated")) {
         setAnalyzeError("Los archivos ANTLR generados no están disponibles. Ejecuta 'npm run generate' y reinicia el servidor.");
       } else {
-        setAnalyzeError(`Error durante el análisis: ${message}`);
+        setAnalyzeError(`Error al analizar: ${message}`);
       }
     } finally {
       setIsRunning(false);
