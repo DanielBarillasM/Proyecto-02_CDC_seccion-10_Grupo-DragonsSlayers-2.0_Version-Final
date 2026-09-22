@@ -25,7 +25,7 @@ export function EditorBreadcrumb({ fileName, scopeChain, onClearScope }: EditorB
           type="button"
           onClick={onClearScope}
           className="ml-1 flex items-center rounded border-2 border-transparent p-0.5 hover:border-border hover:bg-accent"
-          aria-label="Limpiar ámbito seleccionado"
+          aria-label="Limpiar ámbito"
         >
           <X size={12} />
         </button>

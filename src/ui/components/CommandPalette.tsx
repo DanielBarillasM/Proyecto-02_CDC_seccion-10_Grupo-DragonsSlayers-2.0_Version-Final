@@ -70,7 +70,7 @@ export function CommandPalette({
 
   return (
     <CommandDialog open={open} onOpenChange={onOpenChange}>
-      <CommandInput placeholder="Busca una acción del IDE…" />
+      <CommandInput placeholder="Buscar acciones…" />
       <CommandList>
         <CommandEmpty>Sin resultados.</CommandEmpty>
 

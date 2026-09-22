@@ -26,8 +26,7 @@ export function AboutDialog({ open, onOpenChange }: AboutDialogProps) {
             Compiscript <span className="text-primary">Semantic & TAC IDE</span>
           </DialogTitle>
           <DialogDescription>
-            Un laboratorio visual para recorrer el código fuente desde los tokens hasta los tipos, símbolos y
-            ámbitos que le dan significado.
+            Recorre el código fuente desde los tokens hasta los tipos, símbolos y ámbitos.
           </DialogDescription>
         </DialogHeader>
 
@@ -46,7 +45,7 @@ export function AboutDialog({ open, onOpenChange }: AboutDialogProps) {
             <small className="text-secondary-foreground/70">Motor activo</small>
             <strong className="block font-head">Pipeline de tres fases</strong>
             <p className="text-secondary-foreground/70">
-              Lexer, parser, visitor semántico y generador TAC conectados al mismo resultado verificable.
+              Lexer, parser, visitor semántico y generador TAC sobre el mismo árbol de sintaxis.
             </p>
           </div>
         </div>
