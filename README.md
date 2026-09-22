@@ -122,7 +122,7 @@ print resultado
 ### Requisitos
 
 - Node.js 20 o superior.
-- npm o pnpm.
+- npm.
 - Windows, macOS o Linux para el modo web; Electron para escritorio.
 
 ### Windows PowerShell
