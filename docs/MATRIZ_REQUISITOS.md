@@ -7,7 +7,7 @@ Esta matriz contrasta el enunciado de análisis semántico con la implementació
 | Requisito | Evidencia | Estado |
 |---|---|---|
 | Diseño de TAC tipado | `src/tac/types.ts`, `TAC_DESIGN.md` | Cubierto |
-| Traducción desde ANTLR | `src/tac/generatorV2.ts` | Cubierto |
+| Traducción desde ANTLR | `src/tac/generator.ts` | Cubierto |
 | Temporales y reutilización | `src/tac/allocators.ts`, pruebas TAC | Cubierto |
 | Tabla de símbolos con almacenamiento | `SymbolStorage`, panel de símbolos | Cubierto |
 | Registros de activación | `ActivationRecord`, inspector TAC | Cubierto |

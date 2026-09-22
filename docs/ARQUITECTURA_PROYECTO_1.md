@@ -40,7 +40,7 @@ AnalyzeResult
 
 `src/lib/analyze.ts` crea el lexer, llena el token stream, ejecuta `program()` y decide si la fase semántica puede comenzar. UI, CLI y pruebas consumen el mismo `AnalyzeResult`; ninguna interfaz posee una versión alternativa de las reglas.
 
-En modo `tac`, el mismo orquestador ejecuta `generateTacV2()` solamente después de completar las tres fases anteriores sin errores. El generador recorre los contextos tipados de ANTLR, reutiliza los símbolos y ámbitos semánticos y produce instrucciones, temporales, etiquetas, layouts de clase y registros de activación.
+En modo `tac`, el mismo orquestador ejecuta `generateTac()` solamente después de completar las tres fases anteriores sin errores. El generador recorre los contextos tipados de ANTLR, reutiliza los símbolos y ámbitos semánticos y produce instrucciones, temporales, etiquetas, layouts de clase y registros de activación.
 
 ```text
 ANTLR CST válido

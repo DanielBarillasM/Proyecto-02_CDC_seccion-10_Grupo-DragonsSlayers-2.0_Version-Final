@@ -2,13 +2,13 @@
 
 ## Objetivo
 
-El módulo `src/tac/generatorV2.ts` transforma el CST tipado por ANTLR y el resultado semántico validado en código de tres direcciones determinista. La generación se bloquea cuando existen errores léxicos, sintácticos o semánticos para evitar producir código engañoso.
+El módulo `src/tac/generator.ts` transforma el CST tipado por ANTLR y el resultado semántico validado en código de tres direcciones determinista. La generación se bloquea cuando existen errores léxicos, sintácticos o semánticos para evitar producir código engañoso.
 
 ## Pipeline
 
 1. `analyzeInput()` ejecuta lexer y parser.
 2. El visitante semántico construye símbolos, ámbitos y diagnósticos.
-3. `generateTacV2()` recibe únicamente un árbol aceptado y emite instrucciones tipadas.
+3. `generateTac()` recibe únicamente un árbol aceptado y emite instrucciones tipadas.
 4. El resultado expone código formateado, instrucciones, métricas y marcos de activación.
 5. La interfaz permite inspeccionar, filtrar y exportar TAC.
 

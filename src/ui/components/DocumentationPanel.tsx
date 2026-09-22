@@ -29,7 +29,7 @@ export function DocumentationPanel() {
         <AccordionTrigger>Generación de código intermedio</AccordionTrigger>
         <AccordionContent>
           <p className="text-sm">
-            <code>generatorV2.ts</code> recorre los contextos tipados de ANTLR y descompone expresiones en
+            <code>generator.ts</code> recorre los contextos tipados de ANTLR y descompone expresiones en
             instrucciones de tres direcciones. Conserva cortocircuito, temporales reutilizables, etiquetas,
             llamadas, arreglos, objetos, clases, closures y flujo de control. La tabla de símbolos se amplía
             con almacenamiento abstracto y cada función o método obtiene un registro de activación.
