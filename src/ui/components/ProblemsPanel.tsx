@@ -206,7 +206,7 @@ function DiagnosticRow({ diagnostic, onRevealLine }: { diagnostic: SemanticDiagn
       {diagnostic.hint && <p className="italic">Sugerencia: {diagnostic.hint}</p>}
       {diagnostic.related?.map((related, index) => (
         <p key={`${diagnostic.id}-related-${index}`}>
-          {related.message} — L{related.line}:C{related.column}
+          {related.message}, L{related.line}:C{related.column}
         </p>
       ))}
     </button>

@@ -103,7 +103,7 @@ export function ResultOverviewPanel({ result }: { result: AnalyzeResult | null }
           <div className="w-full">
             <h4 className="font-head text-xs uppercase tracking-wide">Diagnósticos destacados</h4>
             {semantic.diagnostics.length === 0 ? (
-              <p className="text-sm text-secondary-foreground/70">No se produjeron diagnósticos semánticos.</p>
+              <p className="text-sm text-secondary-foreground/70">Sin diagnósticos semánticos.</p>
             ) : (
               <ul className="flex flex-col gap-1 text-sm">
                 {semantic.diagnostics.slice(0, 3).map((diagnostic) => (
