@@ -60,7 +60,7 @@ export function CompilerGuide() {
 
       <div className="flex flex-col gap-1 rounded border-2 bg-accent p-2">
         <div className="flex items-center gap-2 font-head">
-          <Database size={14} /> Resultado verificable
+          <Database size={14} /> Resultados
         </div>
         <p className="text-muted-foreground">
           Diagnósticos, tabla de símbolos con almacenamiento, ámbitos, TAC, bloques básicos y marcos de activación.
