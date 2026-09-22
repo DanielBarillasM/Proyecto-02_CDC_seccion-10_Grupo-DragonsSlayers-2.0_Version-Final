@@ -70,7 +70,7 @@ async function main(): Promise<void> {
   const input = fs.readFileSync(filePath, "utf8");
   const result = analyzeInput(input, parsed.mode);
 
-  console.log(color(colors.cyan, "\nCOMPISCRIPT SEMANTIC & TAC IDE — PIPELINE DE COMPILACIÓN"));
+  console.log(color(colors.cyan, "\nCOMPISCRIPT SEMANTIC & TAC IDE: PIPELINE DE COMPILACIÓN"));
   console.log(`Archivo: ${filePath}`);
   console.log(`Modo: ${parsed.mode}`);
   console.log(`Motor: ${ANALYZER_ENGINE}`);
@@ -79,14 +79,14 @@ async function main(): Promise<void> {
   if (result.lexicalErrors.length > 0) {
     console.log(color(colors.red, `${colors.bold}Errores léxicos:`));
     for (const error of result.lexicalErrors) {
-      console.log(`  Línea ${error.line}, columna ${error.column} — ${error.offendingSymbol ?? "<EOF>"}: ${error.message}`);
+      console.log(`  Línea ${error.line}, columna ${error.column}: ${error.offendingSymbol ?? "<EOF>"}: ${error.message}`);
     }
   }
 
   if (result.syntaxErrors.length > 0) {
     console.log(color(colors.yellow, `${colors.bold}Errores sintácticos:`));
     for (const error of result.syntaxErrors) {
-      console.log(`  Línea ${error.line}, columna ${error.column} — ${error.offendingSymbol ?? "<EOF>"}: ${error.message}`);
+      console.log(`  Línea ${error.line}, columna ${error.column}: ${error.offendingSymbol ?? "<EOF>"}: ${error.message}`);
     }
   }
 
@@ -100,7 +100,7 @@ async function main(): Promise<void> {
       } else {
         for (const diagnostic of result.semantic.diagnostics) {
           const severityColor = diagnostic.severity === "error" ? colors.red : colors.yellow;
-          console.log(color(severityColor, `  [${diagnostic.code}] L${diagnostic.line}:C${diagnostic.column} — ${diagnostic.message}`));
+          console.log(color(severityColor, `  [${diagnostic.code}] L${diagnostic.line}:C${diagnostic.column}: ${diagnostic.message}`));
         }
       }
 
@@ -128,7 +128,7 @@ async function main(): Promise<void> {
 
   if (result.accepted) {
     const label = parsed.mode === "tac"
-      ? "Programa aceptado: se generó código intermedio TAC correctamente."
+      ? "Programa aceptado: se generó el código intermedio TAC."
       : parsed.mode === "semantic"
       ? "Programa aceptado: no se encontraron errores léxicos, sintácticos ni semánticos."
       : parsed.mode === "parser"
