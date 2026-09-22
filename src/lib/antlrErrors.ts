@@ -95,7 +95,7 @@ export class CollectingErrorListener<TSymbol> implements ANTLRErrorListener<TSym
           source: this.source,
           line,
           column,
-          message: `Se alcanzó el límite de ${this.maxErrors} diagnósticos mostrados. El análisis continuó, pero se omitieron mensajes adicionales.`,
+          message: `Se alcanzó el límite de ${this.maxErrors} diagnósticos mostrados; se omitieron mensajes adicionales.`,
           severity: "error"
         });
       }

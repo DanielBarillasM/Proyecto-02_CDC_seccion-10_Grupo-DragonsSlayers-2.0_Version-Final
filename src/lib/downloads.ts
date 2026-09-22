@@ -32,7 +32,7 @@ export function resultToJson(result: AnalyzeResult): string {
     tac: result.tac,
     explanation: result.explanation,
     generatedBy: "ANTLR 4 + antlr4ts + visitors semánticos y generador TAC TypeScript",
-    project: "Proyecto 2 — Compiscript Semantic & TAC IDE"
+    project: "Proyecto 2: Compiscript Semantic & TAC IDE"
   };
   return JSON.stringify(payload, null, 2);
 }
@@ -61,7 +61,7 @@ export function parseTreeToText(result: AnalyzeResult): string {
     `Lenguaje: ${result.language}`,
     `Resultado: ${result.accepted ? "ACCEPTED" : "REJECTED"}`,
     "",
-    result.formattedParseTree || "— (árbol vacío)"
+    result.formattedParseTree || "(árbol vacío)"
   ];
   return lines.join("\n");
 }
@@ -97,7 +97,7 @@ export function tacReportToText(result: AnalyzeResult): string {
     `Etiquetas: ${tac.metrics.labelCount}`,
     `Marcos de activación: ${tac.metrics.activationRecordCount}`,
     "",
-    tac.formattedCode || "— (sin instrucciones)",
+    tac.formattedCode || "(sin instrucciones)",
     "",
     "=== MARCOS ===",
     ...tac.activationRecords.flatMap((frame) => [
@@ -142,7 +142,7 @@ export function semanticReportToText(result: AnalyzeResult): string {
   } else {
     for (const diagnostic of semantic.diagnostics) {
       lines.push(
-        `- [${diagnostic.severity.toUpperCase()}] ${diagnostic.code} L${diagnostic.line}:C${diagnostic.column} — ${diagnostic.message}`
+        `- [${diagnostic.severity.toUpperCase()}] ${diagnostic.code} L${diagnostic.line}:C${diagnostic.column}: ${diagnostic.message}`
       );
       if (diagnostic.hint) lines.push(`  Sugerencia: ${diagnostic.hint}`);
     }
