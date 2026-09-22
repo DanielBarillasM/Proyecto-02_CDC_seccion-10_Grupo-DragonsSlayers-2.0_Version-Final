@@ -7,7 +7,6 @@ import {
   semanticReportToText,
   symbolsToCsv,
   tacToCsv,
-  tacReportToText,
   tokensToCsv
 } from "../../lib/downloads";
 import { grammarSource } from "../../lib/examples";

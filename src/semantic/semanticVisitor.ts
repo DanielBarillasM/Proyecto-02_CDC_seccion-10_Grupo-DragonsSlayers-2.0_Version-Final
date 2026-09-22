@@ -18,7 +18,6 @@ import { AbstractParseTreeVisitor } from "antlr4ts/tree/AbstractParseTreeVisitor
 import type { CompiscriptVisitor } from "../generated/CompiscriptVisitor";
 import type {
   AdditiveExpressionContext,
-  ArgumentsContext,
   ArrayLiteralContext,
   AssignmentExpressionContext,
   BlockContext,
@@ -71,7 +70,7 @@ import {
 } from "./declarationVisitor";
 import { createDiagnostic, resetDiagnosticCounter, type SemanticDiagnostic } from "./diagnostics";
 import { bodyGuaranteesReturn, findFirstUnreachableIndex } from "./flowAnalysis";
-import { ScopeManager, type ScopeInfo } from "./scopes";
+import { ScopeManager } from "./scopes";
 import type { SourceLocation, SymbolEntry } from "./symbols";
 import {
   T,
@@ -79,7 +78,6 @@ import {
   isAbsorbing,
   isArrayType,
   isFunctionType,
-  isInstanceType,
   type SemanticType
 } from "./semanticTypes";
 import {
