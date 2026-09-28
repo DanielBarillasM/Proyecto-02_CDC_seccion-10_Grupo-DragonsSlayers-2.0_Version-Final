@@ -1,0 +1,47 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch: {}
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        include:
+          - os: windows-latest
+            package: exe:portable
+          - os: windows-latest
+            package: exe:installer
+          - os: macos-latest
+            package: exe:mac
+          - os: ubuntu-latest
+            package: exe:linux
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+
+      - run: npm ci
+
+      - run: npm run check
+      - run: npm test
+      - run: npm run build
+
+      - run: npm run ${{ matrix.package }}
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: compiscript-${{ matrix.os }}-${{ strategy.job-index }}
+          path: |
+            release/*.exe
+            release/*.dmg
+            release/*.zip
+            release/*.AppImage
+          if-no-files-found: ignore
