@@ -55,7 +55,7 @@ function TacInspector({ result }: { result: AnalyzeResult }) {
       {result.tac.status !== "completed" ? <p className="text-sm text-muted-foreground">{result.tac.skipReason ?? "Selecciona Generación TAC y ejecuta el análisis."}</p> : (
         <>
           <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-3">
-            {[['Instr.', result.tac.metrics.instructionCount], ['Temps.', result.tac.metrics.temporaryCount], ['Reusos', result.tac.metrics.temporariesReuseCount], ['Pico vivos', result.tac.metrics.peakLiveTemporaries], ['Labels', result.tac.metrics.labelCount], ['Frames', result.tac.metrics.activationRecordCount]].map(([label, value]) => (
+            {[['Instr.', result.tac.metrics.instructionCount], ['Bloques', result.tac.basicBlocks.length], ['Temps.', result.tac.metrics.temporaryCount], ['Reusos', result.tac.metrics.temporariesReuseCount], ['Pico vivos', result.tac.metrics.peakLiveTemporaries], ['Labels', result.tac.metrics.labelCount], ['Frames', result.tac.metrics.activationRecordCount]].map(([label, value]) => (
               <div key={String(label)} className="rounded border bg-muted/20 p-2"><p className="text-[10px] text-muted-foreground">{label}</p><p className="font-mono text-sm">{value}</p></div>
             ))}
           </div>
@@ -134,29 +134,26 @@ function TacInspector({ result }: { result: AnalyzeResult }) {
 
 function TacVisualPanel({ result }: { result: AnalyzeResult }) {
   const instructions = result.tac.instructions;
-  const labels = useMemo(() => new Map(instructions.filter((item) => item.op === "LABEL").map((item) => [String(item.result?.value), item.index])), [instructions]);
-  const blocks = useMemo(() => {
-    const branchOps = new Set(["GOTO", "IF_TRUE", "IF_FALSE", "RETURN"]);
-    const starts = [0, ...instructions.flatMap((item, index) => {
-      const next = instructions[index + 1];
-      return item.op === "LABEL" || (branchOps.has(item.op) && next) ? [item.op === "LABEL" ? item.index : next.index] : [];
-    })];
-    return [...new Set(starts)].sort((a, b) => a - b).map((start, index, all) => {
-      const end = all[index + 1] ?? instructions.length;
-      const block = instructions.slice(start, end);
-      return { id: `B${index}`, start, block, title: block.find((item) => item.op === "LABEL")?.result?.value ?? `entrada_${index}` };
+  const instructionsByIndex = useMemo(() => new Map(instructions.map((item) => [item.index, item])), [instructions]);
+  const blocks = useMemo(() => result.tac.basicBlocks.map((block, index) => ({
+    id: block.id,
+    start: block.startIndex,
+    block: block.instructionIndices.flatMap((instructionIndex) => {
+      const instruction = instructionsByIndex.get(instructionIndex);
+      return instruction ? [instruction] : [];
+    }),
+    title: block.label ?? `entrada_${index}`
+  })), [instructionsByIndex, result.tac.basicBlocks]);
+  const edges = useMemo(() => {
+    const indexById = new Map(blocks.map((block, index) => [block.id, index]));
+    return result.tac.controlFlowEdges.flatMap((edge) => {
+      const from = indexById.get(edge.from);
+      const to = indexById.get(edge.to);
+      return from === undefined || to === undefined
+        ? []
+        : [{ from, to, conditional: edge.kind === "true" || edge.kind === "false", kind: edge.kind }];
     });
-  }, [instructions]);
-  const edges = useMemo(() => blocks.flatMap((block, index) => {
-    const last = block.block[block.block.length - 1];
-    const target = last?.result?.kind === "label" ? labels.get(String(last.result.value)) : undefined;
-    const targetIndex = target === undefined ? -1 : blocks.findIndex((candidate) => candidate.start <= target && (blocks[blocks.indexOf(candidate) + 1]?.start ?? instructions.length) > target);
-    const isConditional = last?.op === "IF_TRUE" || last?.op === "IF_FALSE";
-    const destinations = isConditional
-      ? [targetIndex, index < blocks.length - 1 ? index + 1 : -1]
-      : last?.op === "GOTO" ? [targetIndex] : [index < blocks.length - 1 ? index + 1 : -1];
-    return [...new Set(destinations)].filter((value) => value >= 0).map((to) => ({ from: index, to, conditional: isConditional }));
-  }), [blocks, labels]);
+  }, [blocks, result.tac.controlFlowEdges]);
   const outgoingByBlock = useMemo(() => new Map(blocks.map((block, index) => [index, edges.filter((edge) => edge.from === index)])), [blocks, edges]);
   return (
     <div className="flex flex-col gap-3 p-3">
@@ -172,7 +169,7 @@ function TacVisualPanel({ result }: { result: AnalyzeResult }) {
               return <article key={block.id} role="listitem" className="relative min-w-0 overflow-hidden rounded-lg border border-white/10 bg-[#18212a] shadow-sm transition-colors hover:border-primary/70">
                 <header className="flex items-center justify-between border-b border-white/10 bg-white/[0.03] px-3 py-2"><div><span className="font-mono text-xs font-bold text-primary">{block.id}</span><span className="ml-2 text-[10px] text-white/60">{String(block.title)}</span></div><span className="font-mono text-[10px] text-white/45">{block.start.toString().padStart(3, "0")}</span></header>
                 <div className="min-w-0 space-y-1 p-3">{block.block.slice(0, 6).map((item) => <div key={item.index} className="grid grid-cols-[2rem_minmax(0,1fr)] gap-2 font-mono text-[11px] leading-5"><span className="text-right text-white/35">{item.index}</span><code className="min-w-0 break-words whitespace-normal text-white/90" title={formatTac([item])}>{formatTac([item])}</code></div>)}{block.block.length > 6 && <p className="pl-10 text-[10px] text-white/45">+ {block.block.length - 6} instrucciones</p>}</div>
-                <footer className="flex flex-wrap gap-1 border-t border-white/10 px-3 py-2">{outgoing.length ? outgoing.map((edge) => <span key={`${edge.from}-${edge.to}`} className={`rounded-full px-2 py-0.5 text-[10px] ${edge.conditional ? "bg-amber-400/15 text-amber-300" : "bg-primary/15 text-primary"}`}>{edge.conditional ? "condición →" : "siguiente →"} {blocks[edge.to]?.id ?? "fin"}</span>) : <span className="text-[10px] text-white/45">fin del flujo</span>}</footer>
+                <footer className="flex flex-wrap gap-1 border-t border-white/10 px-3 py-2">{outgoing.length ? outgoing.map((edge) => <span key={`${edge.from}-${edge.to}-${edge.kind}`} className={`rounded-full px-2 py-0.5 text-[10px] ${edge.conditional ? "bg-amber-400/15 text-amber-300" : "bg-primary/15 text-primary"}`}>{edge.kind} → {blocks[edge.to]?.id ?? "fin"}</span>) : <span className="text-[10px] text-white/45">fin del flujo</span>}</footer>
               </article>;
             })}
           </div>

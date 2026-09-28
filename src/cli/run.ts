@@ -119,7 +119,7 @@ async function main(): Promise<void> {
       console.log(color(colors.cyan, `\n${colors.bold}Código intermedio TAC:`));
       console.log(result.tac.formattedCode);
       console.log(
-        `\nInstrucciones: ${result.tac.metrics.instructionCount} | Temporales: ${result.tac.metrics.temporaryCount} | Reutilizados: ${result.tac.metrics.temporariesReuseCount} | Etiquetas: ${result.tac.metrics.labelCount} | Frames: ${result.tac.metrics.activationRecordCount}`
+        `\nInstrucciones: ${result.tac.metrics.instructionCount} | Bloques: ${result.tac.basicBlocks.length} | Aristas: ${result.tac.controlFlowEdges.length} | Temporales: ${result.tac.metrics.temporaryCount} | Reutilizados: ${result.tac.metrics.temporariesReuseCount} | Etiquetas: ${result.tac.metrics.labelCount} | Frames: ${result.tac.metrics.activationRecordCount}`
       );
     } else {
       console.log(color(colors.yellow, `\nTAC ${result.tac.status}: ${result.tac.skipReason ?? "sin resultado"}`));

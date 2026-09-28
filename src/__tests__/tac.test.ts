@@ -46,6 +46,19 @@ describe("TAC core", () => {
     const result = analyzeInput("if (true) { print(1); } else { print(2); }", "tac");
     const labels = new Set(result.tac.instructions.filter((instruction) => instruction.op === "LABEL").map((instruction) => String(instruction.result?.value)));
     result.tac.instructions.filter((instruction) => instruction.op === "IF_FALSE" || instruction.op === "GOTO").forEach((instruction) => expect(labels.has(String(instruction.result?.value ?? instruction.arg1?.value))).toBe(true));
+    expect(result.tac.basicBlocks.length).toBeGreaterThan(1);
+    const blockIds = new Set(result.tac.basicBlocks.map((block) => block.id));
+    expect(result.tac.controlFlowEdges.every((edge) => blockIds.has(edge.from) && blockIds.has(edge.to))).toBe(true);
+  });
+
+  it("treats return as a terminal instruction in the control-flow graph", () => {
+    const result = analyzeInput("function value(): integer { return 1; } print(value());", "tac");
+    const returnInstruction = result.tac.instructions.find((instruction) => instruction.op === "RETURN");
+    const returnBlock = result.tac.basicBlocks.find((block) =>
+      returnInstruction ? block.instructionIndices.includes(returnInstruction.index) : false
+    );
+    expect(returnBlock).toBeDefined();
+    expect(result.tac.controlFlowEdges.some((edge) => edge.from === returnBlock?.id)).toBe(false);
   });
 
   it("keeps TAC source locations and monotonic indices", () => {

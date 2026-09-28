@@ -104,7 +104,7 @@
   \vspace{0.65cm}
 
   {\large Catedrático: Ing. Carlos Valdéz\par}
-  {\large Agosto de 2026\par}
+  {\large Septiembre de 2026\par}
 \end{titlepage}
 \nopagecolor
 \color{black}
@@ -132,10 +132,9 @@ directamente el resultado de esa fase semántica: recorre los mismos contextos
 tipados del parser y solo se ejecuta cuando lexer, parser y semántica terminan sin
 errores.
 
-La versión documentada reporta \textbf{132 pruebas aprobadas en 8 archivos}
-(incluyendo 14 pruebas dedicadas a TAC en \archivo{tac.test.ts}), comprobación
-TypeScript sin errores (\codigo{tsc --noEmit}) y build de producción exitoso con
-\textbf{3425 módulos transformados}. El alcance concluye en la representación
+La versión documentada reporta \textbf{133 pruebas aprobadas en 8 archivos}
+(incluyendo 15 pruebas dedicadas a TAC en \archivo{tac.test.ts}), comprobación
+TypeScript sin errores (\codigo{tsc --noEmit}) y build de producción exitoso. El alcance concluye en la representación
 intermedia: el proyecto no interpreta el programa ni produce ensamblador, código
 máquina o código objeto.
 
@@ -154,11 +153,11 @@ completes without errors, guaranteeing that every emitted instruction correspond
 a type-checked program.
 
 The generator produces deterministic temporaries with reuse and a live-set free
-list, label-based jumps, sequential instruction streams, per-function and per-class
+list, label-based jumps, basic blocks and control-flow edges, per-function and per-class
 activation records with byte offsets and alignment, and class layouts covering
 inheritance and closures (\codigo{LOAD\_CAPTURE}, \codigo{STORE\_CAPTURE},
-\codigo{MAKE\_CLOSURE}). The implementation is validated by 132 automated tests
-across 8 files, including 14 tests exercising TAC generation directly, a passing
+\codigo{MAKE\_CLOSURE}). The implementation is validated by 133 automated tests
+across 8 files, including 15 tests exercising TAC generation directly, a passing
 TypeScript check, and a successful production build. This document focuses on the
 TAC design, its storage model and its verification evidence, referencing the
 Project 1 report for the frontend it builds upon.
@@ -608,7 +607,7 @@ TypeScript & 5.6 & motor y UI tipados \\
 ANTLR / antlr4ts & 4 / 0.5 alpha & lexer, parser, listener y Visitor \\
 React & 19 & interfaz declarativa \\
 Vite & 6 & desarrollo y build web \\
-Vitest & 3.2 & pruebas \\
+Vitest & 5.0 & pruebas \\
 Electron & 43 & escritorio \\
 electron-builder & 26 & empaquetado Windows, macOS y Linux \\
 LaTeX + TikZ & TeX Live & documentación vectorial \\
@@ -1382,8 +1381,8 @@ Excepciones & \codigo{TRY\_BEGIN}, \codigo{TRY\_END}, \codigo{CATCH\_BEGIN} \\
 
 \section{Ejemplo mínimo}
 
-Para \codigo{function suma(a: integer, b: integer): integer \{ return a + b; \}} y
-\codigo{print(suma(10, 20))}, el generador produce:
+Para una función \codigo{suma} que recibe dos enteros y retorna su suma, seguida
+por la llamada \codigo{print(suma(10, 20))}, el generador produce:
 
 \begin{verbatim}
 goto L_after_suma_0
@@ -1489,27 +1488,27 @@ constructor: las llamadas emiten \codigo{param} para el receptor antes que para 
 argumentos declarados, de forma que la aridad de \codigo{call} siempre incluye
 \codigo{this}.
 
-\chapter{Bloques de instrucciones y su límite actual}
+\chapter{Bloques básicos y flujo de control}
 
-\section{Lo que existe}
+\section{Construcción en el núcleo TAC}
 
 El generador emite un flujo lineal de instrucciones con \codigo{LABEL},
 \codigo{GOTO}, \codigo{IF\_TRUE} e \codigo{IF\_FALSE} explícitos para representar
 \codigo{if/else}, \codigo{while}, \codigo{do-while}, \codigo{for}, \codigo{foreach},
-\codigo{switch} y \codigo{try/catch}. No existe una estructura de bloques básicos ni
-un grafo de flujo de control (\emph{CFG}) dentro de \archivo{src/tac/}.
+\codigo{switch} y \codigo{try/catch}. Después, \archivo{src/tac/controlFlow.ts}
+identifica líderes, construye bloques básicos y genera aristas etiquetadas como
+\codigo{fallthrough}, \codigo{jump}, \codigo{true} o \codigo{false}. El resultado se
+expone mediante \codigo{basicBlocks} y \codigo{controlFlowEdges} dentro de
+\codigo{TacGenerationResult}.
 
-\section{Partición visual}
+\section{Consumo visual y terminadores}
 
 El panel \emph{Flujo visual del TAC} (\archivo{src/ui/components/RightDock.tsx},
-componente \codigo{TacVisualPanel}) reconstruye bloques básicos en el cliente,
-derivándolos con \codigo{useMemo} a partir del arreglo de instrucciones: un bloque
-nuevo comienza en cada \codigo{LABEL} y en la instrucción siguiente a todo salto.
-Esta partición es solo de presentación -- no forma parte de \codigo{TacGenerationResult}
-ni tiene pruebas dedicadas -- y su cálculo de aristas trata cualquier bloque que no
-termine en \codigo{GOTO} ni en salto condicional como una caída al bloque siguiente,
-lo cual asigna una arista de continuación incluso cuando la última instrucción es
-\codigo{RETURN}. Se documenta como limitación conocida en el capítulo de resultados.
+componente \codigo{TacVisualPanel}) consume directamente esas estructuras; ya no
+reconstruye el CFG dentro de React. \codigo{RETURN}, \codigo{FUNC\_END} y
+\codigo{PROGRAM\_END} se consideran terminadores y no generan caída al bloque
+siguiente. La suite TAC verifica que todas las aristas resuelvan a bloques existentes
+y que el bloque terminado por \codigo{RETURN} no tenga sucesores.
 
 \chapter{Diseño del IDE}
 
@@ -1721,7 +1720,7 @@ garantizar que la demostración siga sincronizada.
 Suite & Cantidad & Cobertura principal \\
 \midrule
 \archivo{semanticAnalyzer.test.ts} & 68 & reglas semánticas y regresiones \\
-\archivo{tac.test.ts} & 14 & instrucciones, temporales, frames y bloqueo entre fases \\
+\archivo{tac.test.ts} & 15 & instrucciones, CFG, temporales, frames y bloqueo entre fases \\
 \archivo{rubric.examples.test.ts} & 8 & matriz léxica/sintáctica heredada \\
 \archivo{projectExamples.test.ts} & 8 & archivos semánticos de demostración \\
 \archivo{parser.test.ts} & 9 & aceptación, CST y diagnósticos sintácticos \\
@@ -1729,7 +1728,7 @@ Suite & Cantidad & Cobertura principal \\
 \archivo{scopeManager.test.ts} & 4 & insertar, recuperar, actualizar y scopes \\
 \archivo{testCases.defaults.test.ts} & 16 & casos por defecto del panel "Pruebas", incluye TAC \\
 \midrule
-\textbf{Total} & \textbf{132} & ocho archivos de prueba aprobados (\codigo{npm test}) \\
+\textbf{Total} & \textbf{133} & ocho archivos de prueba aprobados (\codigo{npm test}) \\
 \bottomrule
 \end{tabularx}
 \caption{Distribución de pruebas verificada para el Proyecto 2.}
@@ -1805,7 +1804,7 @@ los códigos mínimos esperados.
 \section{Comandos de verificación}
 
 \begin{verbatim}
-npm install
+npm ci
 npm run generate
 npm run check
 npm test
@@ -1815,8 +1814,8 @@ npm run build
 En esta revisión, \codigo{npm run generate} reproduce lexer, parser y visitor sin
 diferencias de contenido frente a los archivos versionados (el único diff bruto es
 de fin de línea CRLF/LF entre la máquina de origen y la de verificación); \codigo{npm
-run check} termina sin errores; \codigo{npm test} aprueba 132 casos en 8 archivos; y
-\codigo{npm run build} transforma 3425 módulos. Vite emite una advertencia no
+run check} termina sin errores; \codigo{npm test} aprueba 133 casos en 8 archivos; y
+\codigo{npm run build} finaliza correctamente. Vite emite una advertencia no
 bloqueante porque el bundle principal (Monaco incluido) supera 500 kB.
 
 \section{Criterios de calidad}
@@ -1827,7 +1826,7 @@ bloqueante porque el bundle principal (Monaco incluido) supera 500 kB.
 \toprule
 Criterio & Evidencia \\
 \midrule
-Corrección & reglas, generación TAC y 132 pruebas \\
+Corrección & reglas, generación TAC y 133 pruebas \\
 Reproducibilidad & gramática, lockfile y scripts \\
 Trazabilidad & códigos, ubicaciones, IDs y matriz \\
 Modularidad & separación lib/semantic/ui \\
@@ -1873,7 +1872,7 @@ Clases & herencia & \codigo{classId}, \diag{SEM020} \\
 Arreglos & índice y receptor & \diag{SEM015}, \diag{SEM016} \\
 Switch & discriminante comparable & \diag{SEM021} \\
 TAC & bloqueo por errores previos & \codigo{analyze.ts}, \codigo{emptyTacResult} \\
-TAC & temporales y reutilización & \archivo{allocators.ts}, \codigo{metrics.temporariesReuseCount} \\
+TAC & temporales y reutilización & \archivo{allocators.ts}, \archivo{metrics.temporariesReuseCount} \\
 TAC & registros de activación & \codigo{buildActivationRecords}, \codigo{finalizeFrames} \\
 TAC & layouts de clases y herencia & \codigo{buildClassLayouts} \\
 TAC & closures y capturas & \codigo{LOAD\_CAPTURE}, \codigo{STORE\_CAPTURE}, \codigo{staticLinkRequired} \\
@@ -1895,7 +1894,7 @@ Requisito & Evidencia & Estado \\
 Parser generado & gramática y \archivo{src/generated} & \estado{Cubierto} \\
 Recorrido Visitor & \archivo{semanticVisitor.ts} & \estado{Cubierto} \\
 Árbol visual & CST y árbol semántico & \estado{Cubierto} \\
-Casos de prueba & ocho archivos, 132 pruebas y ejemplos & \estado{Cubierto} \\
+Casos de prueba & ocho archivos, 133 pruebas y ejemplos & \estado{Cubierto} \\
 Generación TAC & \archivo{src/tac} y bloqueo entre fases & \estado{Cubierto} \\
 Tabla de símbolos & \archivo{scopes.ts} y panel UI & \estado{Cubierto} \\
 IDE & React/Vite y Electron & \estado{Cubierto} \\
@@ -1990,8 +1989,8 @@ explica explícitamente el motivo mediante \codigo{skipReason}.
 \section{Requisitos}
 
 \begin{itemize}
-  \item Node.js 20.19 o posterior, o 22.12 o posterior;
-  \item npm 9 o posterior;
+  \item Node.js 22.12 o posterior;
+  \item npm 10 o posterior;
   \item Java/JRE 11 o posterior para regenerar ANTLR;
   \item navegador moderno;
   \item Windows x64, macOS (Intel/Apple Silicon) o Linux x64 para los ejecutables configurados;
@@ -2002,7 +2001,7 @@ explica explícitamente el motivo mediante \codigo{skipReason}.
 
 \begin{verbatim}
 cd compiscript-ide-work
-npm install
+npm ci
 npm run generate
 npm run dev
 \end{verbatim}
@@ -2093,7 +2092,7 @@ mismo fuente; y todo frame con variables capturadas activa
 \codigo{staticLinkRequired}. Los tres ejemplos de error
 (\archivo{14\_error\_lexico.cps}, \archivo{15\_error\_sintactico.cps},
 \archivo{16\_error\_semantico.cps}) confirman que TAC se omite con la razón
-correcta cuando una fase anterior falla. Los ejemplos y 132 pruebas convierten los
+correcta cuando una fase anterior falla. Los ejemplos y 133 pruebas convierten los
 requisitos en evidencia repetible.
 
 \section{Limitaciones}
@@ -2102,9 +2101,8 @@ requisitos en evidencia repetible.
   \item no existe análisis entre múltiples archivos;
   \item no se modela sobrecarga de funciones;
   \item no hay genéricos, interfaces ni tipos unión;
-  \item \archivo{src/tac/} no construye bloques básicos ni un grafo de flujo de
-        control: la partición en bloques que muestra la UI es solo de presentación,
-        vive en \archivo{RightDock.tsx} y no tiene pruebas propias;
+  \item el CFG representa flujo intraprocedural básico, pero todavía no calcula
+        dominadores, lazos naturales ni información de alcanzabilidad por bloque;
   \item las variables capturadas suman a \codigo{totalBytes} del frame pero no a
         \codigo{parameterBytes}, \codigo{localBytes} ni \codigo{temporaryBytes}: no
         hay un \codigo{capturedBytes} explícito;
@@ -2112,8 +2110,8 @@ requisitos en evidencia repetible.
   \item el alcance termina en TAC: no hay asignación de registros, selección de
         instrucciones ni backend de ensamblador o bytecode;
   \item el bundle web principal conserva una advertencia de tamaño (Monaco);
-  \item de los tres empaquetados (Windows, macOS, Linux), solo macOS pudo probarse
-        de extremo a extremo en este sistema; ninguno usa firma comercial;
+  \item los empaquetados no usan firma comercial; el workflow valida cada plataforma
+        en su runner nativo y rechaza jobs sin artefactos;
   \item no existe navegación interactiva a declaración todavía.
 \end{itemize}
 
@@ -2134,10 +2132,7 @@ la entrada.
 \section{Trabajo futuro}
 
 \begin{enumerate}
-  \item mover la partición en bloques básicos y el grafo de flujo de control del
-        panel visual (\archivo{RightDock.tsx}) a \archivo{src/tac/}, con pruebas
-        propias y corrigiendo el cálculo de aristas para que \codigo{RETURN} no
-        reciba una arista de continuación;
+  \item ampliar el CFG con dominadores, lazos naturales y análisis de alcanzabilidad;
   \item añadir navegación de uso a declaración;
   \item incorporar interpretación segura del TAC generado;
   \item continuar hacia asignación de registros y selección de instrucciones sobre
@@ -2172,7 +2167,7 @@ la entrada.
         pruebas.
   \item La visualización conjunta de CST, árbol semántico, scopes y símbolos convierte
         el IDE en una herramienta pedagógica.
-  \item Las 132 pruebas y los archivos de demostración permiten repetir la evidencia
+  \item Las 133 pruebas y los archivos de demostración permiten repetir la evidencia
         técnica y proteger regresiones.
   \item Bloquear TAC en \archivo{analyze.ts} cuando una fase anterior falla evita
         traducir árboles sin garantías de tipo y mantiene la razón de omisión
@@ -2183,9 +2178,8 @@ la entrada.
   \item Calcular el registro de activación después de generar las instrucciones
         (\codigo{finalizeFrames}) permite incorporar los temporales realmente usados
         por cada frame, en vez de reservar espacio especulativo.
-  \item La partición en bloques básicos pertenece today a la capa de presentación y
-        no al generador: es la brecha más importante a cerrar antes de extender el
-        proyecto hacia asignación de registros.
+  \item Los bloques básicos y sus aristas pertenecen al núcleo TAC; la UI consume
+        el mismo CFG probado, sin mantener un algoritmo paralelo de presentación.
 \end{enumerate}
 
 El resultado es una plataforma coherente para estudiar cómo un compilador pasa de
@@ -2363,6 +2357,7 @@ Archivo & Responsabilidad \\
 \archivo{src/semantic/ast.ts} & nodos semánticos \\
 \archivo{src/tac/types.ts} & modelo de instrucción TAC, operandos y \codigo{formatTac} \\
 \archivo{src/tac/allocators.ts} & \codigo{TemporaryAllocator} y \codigo{LabelFactory} \\
+\archivo{src/tac/controlFlow.ts} & bloques básicos y aristas del CFG \\
 \archivo{src/tac/generator.ts} & \codigo{TacGenerator}: instrucciones, frames y layouts \\
 \archivo{src/lib/downloads.ts} & exportadores de TAC, símbolos y reportes \\
 \archivo{src/cli/run.ts} & interfaz de consola \\
@@ -2383,11 +2378,11 @@ Archivo & Responsabilidad \\
 Comando & Propósito \\
 \midrule
 \endhead
-\codigo{npm install} / \codigo{npm ci} & instalar dependencias (\codigo{ci} usa el lockfile fijado) \\
+\codigo{npm ci} & instalar exactamente las dependencias fijadas por el lockfile \\
 \codigo{npm run generate} & regenerar lexer, parser y visitor con ANTLR \\
 \codigo{npm run dev} & iniciar Vite \\
 \codigo{npm run check} & comprobar TypeScript \\
-\codigo{npm test} & ejecutar 132 pruebas en 8 archivos \\
+\codigo{npm test} & ejecutar 133 pruebas en 8 archivos \\
 \codigo{npm run test:examples} & ejecutar casos semánticos en disco \\
 \codigo{npm run build} & construir producción web \\
 \codigo{npm run preview} & servir el build \\
@@ -2446,16 +2441,15 @@ Lenguaje de implementación & TypeScript \\
 Frontend & React 19 y Vite 6 \\
 Escritorio & Electron 43 \\
 Regla inicial & \codigo{program} \\
-Modos & lexer, parser y semantic \\
+Modos & lexer, parser, semantic y tac \\
 Tipos & primitivos, arreglos, funciones, clases e instancias \\
 Scopes & global, bloque, función, clase, ciclo, catch y switch \\
 Diagnósticos & \diag{SEM001}--\diag{SEM023} \\
-TAC & instrucciones tipadas, temporales, etiquetas, frames y layouts de clase \\
-Pruebas & 132 en 8 archivos (14 dedicadas a TAC) \\
+TAC & instrucciones tipadas, bloques, CFG, temporales, etiquetas, frames y layouts de clase \\
+Pruebas & 133 en 8 archivos (15 dedicadas a TAC) \\
 Salidas & UI, CLI, CSV, JSON, TXT, TAC textual y árboles \\
-Plataforma empaquetada & Windows x64, macOS (x64/arm64) y Linux x64 -- macOS
-  verificado de extremo a extremo en esta auditoría; Windows y Linux pendientes de
-  runner nativo (workflow de GitHub Actions incluido) \\
+Plataforma empaquetada & Windows x64, macOS (x64/arm64) y Linux x64 mediante
+  Electron Builder y workflow con runners nativos \\
 Alcance & frente semántico más generación de código intermedio TAC \\
 \bottomrule
 \end{tabularx}

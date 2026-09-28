@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Presentación académica del analizador semántico de Compiscript.">
-  <title>Compiscript Semantic IDE | Presentación del Proyecto 1</title>
+  <title>Compiscript Semantic &amp; TAC IDE | Presentación del Proyecto 2</title>
   <style>
     :root {
       color-scheme: dark;
@@ -92,7 +92,7 @@
     .pipeline-step small { color: var(--muted); }
     .arrow { color: var(--subtle); font: 900 22px var(--mono); }
     .code { margin: 20px 0 0; padding: 18px; overflow: auto; border-radius: 15px; color: #cfe3ff; background: #020712; border: 1px solid rgba(90,144,210,.24); font: 13px/1.65 var(--mono); white-space: pre; }
-    .code .kw { color: var(--violet); } .code .type { color: var(--cyan); } .code .lit { color: var(--green); } .code .bad { color: var(--red); text-decoration: underline wavy; }
+    .code .kw { color: var(--violet); } .code .type { color: var(--cyan); } .code .lit { color: var(--green); } .code .comment { color: var(--muted); } .code .bad { color: var(--red); text-decoration: underline wavy; }
     .architecture { display: grid; grid-template-columns: 1fr 72px 1fr 72px 1fr; align-items: center; gap: 10px; margin-top: 28px; }
     .module { min-height: 172px; display: grid; align-content: center; padding: 22px; text-align: center; border-radius: 18px; border: 1px solid var(--line); background: rgba(9,22,48,.84); }
     .module span { margin-bottom: 8px; color: var(--cyan); font: 850 12px var(--mono); }
@@ -274,8 +274,8 @@
 <body>
   <main class="deck">
     <header class="topbar">
-      <div class="brand"><span class="brand-mark">CS</span>Compiscript Semantic IDE</div>
-      <div class="top-meta"><span>Proyecto 1</span><strong id="counter">01 / 17</strong></div>
+      <div class="brand"><span class="brand-mark">CS</span>Compiscript Semantic &amp; TAC IDE</div>
+      <div class="top-meta"><span>Proyecto 2</span><strong id="counter">01 / 17</strong></div>
     </header>
     <div class="progress" id="progress"></div>
 
@@ -284,22 +284,22 @@
         <img src="assets/compiler-pipeline-neobrutalist.png" alt="Referencia visual neobrutalista del flujo de código hacia tokens, árbol y semántica.">
         <div class="hero-copy">
           <span class="kicker">Construcción de Compiladores</span>
-          <h1>Compiscript<br><span class="accent">Semantic IDE</span></h1>
-          <p class="lead">Análisis léxico, sintáctico y semántico con ANTLR 4, TypeScript, tabla de símbolos y ámbitos léxicos.</p>
-          <div class="chips"><span class="chip">ANTLR 4</span><span class="chip">React + Vite</span><span class="chip">TypeScript</span><span class="chip">Electron</span><span class="chip">115 pruebas</span></div>
+          <h1>Compiscript<br><span class="accent">Semantic &amp; TAC IDE</span></h1>
+          <p class="lead">Frontend completo con ANTLR 4 y generación de código intermedio: temporales, bloques básicos, CFG, frames y layouts.</p>
+          <div class="chips"><span class="chip">ANTLR 4</span><span class="chip">React + Vite</span><span class="chip">TypeScript</span><span class="chip">TAC + CFG</span><span class="chip">133 pruebas</span></div>
         </div>
-        <aside class="speaker-note">Presente el objetivo general: transformar un archivo .cps en información semántica explicable y verificable.</aside>
+        <aside class="speaker-note">Presente el objetivo general: transformar un archivo .cps válido en TAC trazable, organizado en bloques y asociado con almacenamiento abstracto.</aside>
       </section>
 
       <section class="slide" data-title="Problema y objetivo">
         <div class="slide-scroll">
           <span class="kicker">01 · Contexto</span>
-          <h2>La sintaxis correcta no garantiza <span class="accent">significado correcto</span></h2>
-          <p class="lead">Un parser puede aceptar una estructura que todavía use nombres inexistentes, tipos incompatibles o instrucciones fuera de contexto.</p>
+          <h2>Validar el programa no basta: hay que <span class="accent">representarlo</span></h2>
+          <p class="lead">Después de lexer, parser y semántica, el compilador necesita una forma intermedia explícita para expresar cálculos, saltos, llamadas y almacenamiento.</p>
           <div class="grid-3">
-            <article class="card"><span class="card-number">Problema</span><h3>Errores más allá de la gramática</h3><p>Asignar un string a un integer, llamar una función con argumentos incorrectos o usar return fuera de una función.</p></article>
-            <article class="card"><span class="card-number">Objetivo</span><h3>Aplicar reglas semánticas</h3><p>Recorrer el CST válido, inferir tipos, resolver símbolos y producir diagnósticos precisos.</p></article>
-            <article class="card"><span class="card-number">Producto</span><h3>Un IDE explicable</h3><p>Editor, fases visibles, diagnósticos, tabla de símbolos, ámbitos y árboles navegables.</p></article>
+            <article class="card"><span class="card-number">Entrada</span><h3>CST semánticamente válido</h3><p>Solo se genera TAC cuando no existen errores léxicos, sintácticos ni semánticos.</p></article>
+            <article class="card"><span class="card-number">Objetivo</span><h3>Descomponer operaciones</h3><p>Convertir expresiones y control de flujo en instrucciones simples con temporales y etiquetas.</p></article>
+            <article class="card"><span class="card-number">Producto</span><h3>IR inspeccionable</h3><p>TAC textual, bloques, CFG, frames, layouts, métricas y exportaciones desde el IDE.</p></article>
           </div>
         </div>
         <aside class="speaker-note">Diferencie error sintáctico de error semántico con un ejemplo breve.</aside>
@@ -331,18 +331,19 @@
       <section class="slide" data-title="Pipeline">
         <div class="slide-scroll">
           <span class="kicker">03 · Pipeline</span>
-          <h2>Tres fases, una sola fuente de verdad</h2>
-          <p class="lead">El análisis semántico únicamente se ejecuta si las fases anteriores entregan un CST válido.</p>
+          <h2>Cuatro fases, un resultado trazable</h2>
+          <p class="lead">Cada fase conserva sus diagnósticos; TAC solo se ejecuta cuando las tres fases anteriores aceptan el programa.</p>
           <div class="pipeline">
             <div class="pipeline-step"><strong>Fuente .cps</strong><small>caracteres</small></div><span class="arrow">→</span>
             <div class="pipeline-step"><strong>Lexer</strong><small>tokens + errores</small></div><span class="arrow">→</span>
             <div class="pipeline-step"><strong>Parser</strong><small>CST de ANTLR</small></div><span class="arrow">→</span>
-            <div class="pipeline-step"><strong>Visitor</strong><small>tipos + símbolos</small></div>
+            <div class="pipeline-step"><strong>Semántica</strong><small>tipos + símbolos</small></div><span class="arrow">→</span>
+            <div class="pipeline-step"><strong>TAC</strong><small>IR + CFG + frames</small></div>
           </div>
           <div class="grid-3">
             <article class="card"><h3>Recuperación controlada</h3><p>ANTLR continúa después de ciertos errores para informar más de un problema por archivo.</p></article>
             <article class="card"><h3>Sin cascadas falsas</h3><p>Si lexer o parser fallan, la semántica queda marcada como omitida.</p></article>
-            <article class="card"><h3>Resultado común</h3><p>UI, CLI y pruebas consumen el mismo objeto AnalyzeResult.</p></article>
+            <article class="card"><h3>Resultado común</h3><p>UI, CLI, exportaciones y pruebas consumen el mismo <code>AnalyzeResult</code>.</p></article>
           </div>
         </div>
       </section>
@@ -375,16 +376,16 @@ ifStatement
         </div>
       </section>
 
-      <section class="slide" data-title="Arquitectura semántica">
+      <section class="slide" data-title="Arquitectura TAC">
         <div class="slide-scroll">
           <span class="kicker">05 · Arquitectura</span>
-          <h2>Responsabilidades pequeñas y conectadas</h2>
+          <h2>Del árbol tipado al flujo intermedio</h2>
           <div class="architecture">
-            <article class="module"><span>DECLARACIONES</span><h3>Prepasada</h3><p>Identidades de clase, firmas, campos, métodos e herencia.</p></article><span class="arrow">→</span>
-            <article class="module"><span>VISITOR</span><h3>Análisis principal</h3><p>Recorre statements y expresiones, resuelve tipos y produce diagnósticos.</p></article><span class="arrow">→</span>
-            <article class="module"><span>RESULTADO</span><h3>Modelo serializable</h3><p>Símbolos, ámbitos, árboles, métricas y errores para UI, CLI y tests.</p></article>
+            <article class="module"><span>GENERATOR</span><h3>Emisión TAC</h3><p>Traduce contextos ANTLR a instrucciones, temporales, etiquetas y operandos trazables.</p></article><span class="arrow">→</span>
+            <article class="module"><span>CONTROL FLOW</span><h3>Bloques y CFG</h3><p>Detecta líderes y produce aristas de salto, condición y caída.</p></article><span class="arrow">→</span>
+            <article class="module"><span>STORAGE</span><h3>Frames y layouts</h3><p>Asigna offsets abstractos a símbolos, temporales, capturas y campos.</p></article>
           </div>
-          <div class="chips"><span class="chip">typeSystem.ts</span><span class="chip">scopes.ts</span><span class="chip">flowAnalysis.ts</span><span class="chip">diagnostics.ts</span><span class="chip">ast.ts</span></div>
+          <div class="chips"><span class="chip">generator.ts</span><span class="chip">controlFlow.ts</span><span class="chip">allocators.ts</span><span class="chip">types.ts</span><span class="chip">downloads.ts</span></div>
         </div>
       </section>
 
@@ -465,9 +466,9 @@ ifStatement
             <p class="lead">La interfaz reorganiza la información en una guía lateral, un editor dominante y un explorador de resultados por capas.</p>
             <div class="checklist">
               <div class="check"><b>1</b><span>Casos guiados y carga de archivos .cps</span><small>ENTRADA</small></div>
-              <div class="check"><b>2</b><span>Estado visible de lexer, parser y semántica</span><small>PROCESO</small></div>
-              <div class="check"><b>3</b><span>Pestañas para diagnósticos, símbolos, ámbitos y árboles</span><small>SALIDA</small></div>
-              <div class="check"><b>4</b><span>Filtros, métricas y exportaciones</span><small>EXPLICACIÓN</small></div>
+              <div class="check"><b>2</b><span>Pipeline visible de lexer, parser, semántica y TAC</span><small>PROCESO</small></div>
+              <div class="check"><b>3</b><span>Pestañas para TAC, CFG, frames, símbolos, ámbitos y árboles</span><small>SALIDA</small></div>
+              <div class="check"><b>4</b><span>Filtros por opcode y exportaciones TAC, CSV, TXT y JSON</span><small>EVIDENCIA</small></div>
             </div>
           </div>
           <div class="mock-app" aria-label="Representación visual del workbench del IDE">
@@ -482,27 +483,27 @@ ifStatement
           <span class="kicker">11 · Calidad</span>
           <h2>La cobertura se demuestra con casos reproducibles</h2>
           <div class="grid-4">
-            <article class="card stat"><strong>115</strong><span>pruebas aprobadas</span><small>7 suites Vitest</small></article>
-            <article class="card stat"><strong>7</strong><span>archivos de prueba</span><small>lexer + parser + semántica + rúbrica</small></article>
+            <article class="card stat"><strong>133</strong><span>pruebas aprobadas</span><small>8 archivos Vitest</small></article>
+            <article class="card stat"><strong>15</strong><span>pruebas TAC</span><small>IR + storage + CFG</small></article>
             <article class="card stat"><strong>23</strong><span>códigos semánticos</span><small>SEM001–SEM023</small></article>
             <article class="card stat"><strong>4</strong><span>operaciones de tabla</span><small>rúbrica directa</small></article>
           </div>
           <table class="rule-table">
             <thead><tr><th>Categoría</th><th>Casos válidos</th><th>Casos fallidos</th><th>Evidencia</th></tr></thead>
-            <tbody><tr><td>Tipos</td><td>promoción, lógica, listas</td><td>operadores, asignación, índices</td><td>semanticAnalyzer.test.ts</td></tr><tr><td>Ámbitos</td><td>shadowing y padres</td><td>redeclaración y escape</td><td>scopeManager.test.ts</td></tr><tr><td>Funciones y clases</td><td>recursión, closures, herencia</td><td>argumentos, retorno, miembros</td><td>semanticAnalyzer.test.ts</td></tr><tr><td>Lexer</td><td>tokenización</td><td>errores léxicos recuperables</td><td>lexer.test.ts</td></tr><tr><td>Parser</td><td>programas integrales</td><td>errores sintácticos recuperables</td><td>parser.test.ts</td></tr></tbody>
+            <tbody><tr><td>TAC</td><td>expresiones, llamadas, arreglos</td><td>bloqueo por errores previos</td><td>tac.test.ts</td></tr><tr><td>CFG</td><td>saltos y caídas válidas</td><td>sin arista después de return</td><td>tac.test.ts</td></tr><tr><td>Storage</td><td>frames, offsets y reuso</td><td>cero temporales vivos</td><td>tac.test.ts</td></tr><tr><td>Semántica</td><td>tipos, closures, herencia</td><td>SEM001–SEM023</td><td>semanticAnalyzer.test.ts</td></tr><tr><td>Frontend</td><td>programas integrales</td><td>recuperación de errores</td><td>lexer/parser/rubric</td></tr></tbody>
           </table>
         </div>
       </section>
 
-      <section class="slide" data-title="Correcciones">
+      <section class="slide" data-title="TAC y almacenamiento">
         <div class="slide-scroll">
-          <span class="kicker">12 · Refactor aplicado</span>
-          <h2>Errores encontrados y corregidos</h2>
+          <span class="kicker">12 · Representación intermedia</span>
+          <h2>Instrucciones simples, almacenamiento explícito</h2>
           <div class="grid-2">
-            <article class="card"><span class="card-number">ÁMBITOS</span><h3>Clases locales</h3><p>Las clases ya no se almacenan globalmente por nombre. Ahora poseen identidad y resolución léxica.</p></article>
-            <article class="card"><span class="card-number">INFERENCIA</span><h3>Campos y retornos</h3><p>Los campos se infieren antes de métodos y las funciones sin anotación obtienen un retorno observado.</p></article>
-            <article class="card"><span class="card-number">REFERENCIAS</span><h3>Miembros actualizados</h3><p>Los usos de clases, campos y métodos se reflejan en la tabla de símbolos.</p></article>
-            <article class="card"><span class="card-number">GRAMÁTICA</span><h3>Bloques obligatorios</h3><p>Las estructuras de control vuelven a coincidir con la gramática base entregada.</p></article>
+            <article class="card"><span class="card-number">TEMPORALES</span><h3>Pool por frame</h3><p>Los temporales se liberan y reutilizan sin reciclar valores que continúen vivos.</p></article>
+            <article class="card"><span class="card-number">BLOQUES</span><h3>CFG verificable</h3><p>Saltos y condiciones apuntan a bloques existentes; return finaliza el flujo.</p></article>
+            <article class="card"><span class="card-number">FRAMES</span><h3>Offsets alineados</h3><p>Parámetros, locales, capturas y temporales reciben tamaño y desplazamiento abstracto.</p></article>
+            <article class="card"><span class="card-number">CLASES</span><h3>Layouts heredables</h3><p>Campos y métodos conservan offsets y etiquetas deterministas a través de herencia.</p></article>
           </div>
         </div>
       </section>
@@ -512,11 +513,11 @@ ifStatement
           <span class="kicker">13 · Trazabilidad</span>
           <h2>Cobertura directa de la evaluación</h2>
           <div class="checklist">
-            <div class="check"><b>1</b><span>IDE para escribir, cargar y compilar código</span><small>15 PUNTOS</small></div>
-            <div class="check"><b>2</b><span>Parser ANTLR, visitor, sistema de tipos y reglas semánticas</span><small>60 PUNTOS</small></div>
-            <div class="check"><b>3</b><span>Tabla de símbolos con inserción, recuperación, actualización y ámbitos</span><small>25 PUNTOS</small></div>
-            <div class="check"><b>4</b><span>Árbol sintáctico y árbol semántico visuales</span><small>VISUAL</small></div>
-            <div class="check"><b>5</b><span>Documentación, informe y comandos reproducibles</span><small>ENTREGA</small></div>
+            <div class="check"><b>1</b><span>Generación TAC desde el CST validado</span><small>IR</small></div>
+            <div class="check"><b>2</b><span>Temporales reutilizables, etiquetas y saltos verificables</span><small>FLUJO</small></div>
+            <div class="check"><b>3</b><span>Tabla de símbolos con frame, offset, tamaño y alineación</span><small>STORAGE</small></div>
+            <div class="check"><b>4</b><span>Registros de activación, closures y layouts de clases</span><small>RUNTIME</small></div>
+            <div class="check"><b>5</b><span>IDE, CLI, exportaciones, ejemplos, pruebas e informe reproducibles</span><small>EVIDENCIA</small></div>
           </div>
         </div>
       </section>
@@ -527,21 +528,21 @@ ifStatement
             <span class="kicker">14 · Guion de demostración</span>
             <h2>Cómo explicar el proyecto en vivo</h2>
             <ol class="demo-flow">
-              <li><div><strong>Ejecutar el caso válido</strong><span>Mostrar las tres fases en verde y revisar métricas.</span></div></li>
-              <li><div><strong>Abrir tabla y ámbitos</strong><span>Explicar resolución local, padres y referencias.</span></div></li>
-              <li><div><strong>Ejecutar errores semánticos</strong><span>Filtrar SEM003, SEM008 y SEM012.</span></div></li>
-              <li><div><strong>Modificar el editor</strong><span>Corregir un error y volver a analizar con Ctrl + Enter.</span></div></li>
-              <li><div><strong>Mostrar árboles y pruebas</strong><span>Conectar implementación, visualización y evidencia.</span></div></li>
+              <li><div><strong>Ejecutar el programa integral</strong><span>Confirmar las cuatro fases y abrir el TAC generado.</span></div></li>
+              <li><div><strong>Revisar instrucciones y CFG</strong><span>Seguir temporales, etiquetas, bloques y aristas.</span></div></li>
+              <li><div><strong>Abrir frames y layouts</strong><span>Explicar offsets, capturas, métodos y tamaño de instancia.</span></div></li>
+              <li><div><strong>Ejecutar los tres errores</strong><span>Demostrar bloqueo por lexer, parser y semántica.</span></div></li>
+              <li><div><strong>Exportar y mostrar pruebas</strong><span>Conectar implementación, evidencia y reproducibilidad.</span></div></li>
             </ol>
           </div>
-          <pre class="code"><span class="kw">let</span> total: <span class="type">integer</span> = <span class="bad">"texto"</span>;
-
-<span class="kw">function</span> sumar(a: <span class="type">integer</span>): <span class="type">integer</span> {
-  <span class="kw">return</span> a;
+          <pre class="code"><span class="kw">function</span> sumar(a: <span class="type">integer</span>, b: <span class="type">integer</span>): <span class="type">integer</span> {
+  <span class="kw">return</span> a + b;
 }
 
-sumar(<span class="lit">1</span>, <span class="bad">2</span>);
-print(<span class="bad">noExiste</span>);</pre>
+<span class="kw">let</span> total: <span class="type">integer</span> = sumar(<span class="lit">10</span>, <span class="lit">20</span>);
+print(total);
+
+<span class="comment">// TAC: param, call, ADD, RETURN</span></pre>
         </div>
       </section>
 
@@ -550,18 +551,17 @@ print(<span class="bad">noExiste</span>);</pre>
           <div>
             <span class="kicker">15 · Reproducibilidad</span>
             <h2>Instalación y verificación</h2>
-            <p class="lead">La aplicación reside en <code>compiscript-ide-work</code> y comparte el mismo motor entre web, escritorio y CLI.</p>
-            <div class="chips"><span class="chip">Node.js 20+</span><span class="chip">npm</span><span class="chip">Java para regenerar ANTLR</span></div>
+            <p class="lead">La versión 2.0.0 comparte el mismo motor entre web, escritorio, CLI y runners de release.</p>
+            <div class="chips"><span class="chip">Node.js 22.12+</span><span class="chip">npm 10+</span><span class="chip">Java para regenerar ANTLR</span></div>
           </div>
-          <pre class="code">cd compiscript-ide-work
-npm install
-npm run generate
+          <pre class="code">npm ci
+npm run check
 npm test
 npm run build
 npm run dev
 
-# CLI semántica
-npm run cli -- examples/semantic/valid_complete.cps</pre>
+# CLI TAC integral
+npm run cli:tac</pre>
         </div>
       </section>
 
@@ -569,15 +569,15 @@ npm run cli -- examples/semantic/valid_complete.cps</pre>
         <div class="slide-scroll">
           <span class="kicker">16 · Conclusiones</span>
           <h2>Un compilador debe poder <span class="accent">explicar sus decisiones</span></h2>
-          <p class="lead">Compiscript Semantic IDE conecta teoría, implementación y evidencia: reconoce el lenguaje, valida su significado y expone cada resultado de forma inspeccionable.</p>
+          <p class="lead">Compiscript Semantic &amp; TAC IDE conecta teoría, implementación y evidencia: valida el programa y produce una representación intermedia trazable.</p>
           <div class="grid-3">
             <article class="card"><h3>Correctitud</h3><p>Reglas centralizadas, ámbitos léxicos reales y diagnósticos estables.</p></article>
-            <article class="card"><h3>Trazabilidad</h3><p>Del código fuente al símbolo, tipo, ámbito y nodo semántico.</p></article>
-            <article class="card"><h3>Demostrabilidad</h3><p>IDE interactivo, CLI, pruebas automatizadas, documentación e informe.</p></article>
+            <article class="card"><h3>Trazabilidad</h3><p>Del código fuente al símbolo, TAC, bloque, frame y offset.</p></article>
+            <article class="card"><h3>Demostrabilidad</h3><p>IDE, CLI, 133 pruebas, documentación, informe y releases reproducibles.</p></article>
           </div>
-          <div class="chips"><span class="chip">Grupo DragonsSlayers 2.0</span><span class="chip">Sección 10</span><span class="chip">Proyecto 1</span></div>
+          <div class="chips"><span class="chip">Grupo DragonsSlayers 2.0</span><span class="chip">Sección 10</span><span class="chip">Proyecto 2</span><span class="chip">Versión 2.0.0</span></div>
         </div>
-        <aside class="speaker-note">Cierre resaltando que la interfaz no inventa datos: representa el resultado real del visitor semántico.</aside>
+        <aside class="speaker-note">Cierre resaltando que la interfaz representa el mismo resultado TAC y CFG que consumen la CLI, las exportaciones y las pruebas.</aside>
       </section>
     </div>
 
@@ -603,7 +603,7 @@ npm run cli -- examples/semantic/valid_complete.cps</pre>
       progress.style.width = `${((index + 1) / slides.length) * 100}%`;
       prev.disabled = index === 0;
       next.disabled = index === slides.length - 1;
-      document.title = `${slides[index].dataset.title} | Compiscript Semantic IDE`;
+      document.title = `${slides[index].dataset.title} | Compiscript Semantic & TAC IDE`;
       document.querySelectorAll('.speaker-note').forEach(note => note.classList.remove('visible'));
     }
     function go(delta) { index = Math.max(0, Math.min(slides.length - 1, index + delta)); render(); }

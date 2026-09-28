@@ -7,9 +7,10 @@
 Un entorno visual para recorrer el frontend de Compiscript y producir código intermedio de tres direcciones verificable.
 
 [![Proyecto](https://img.shields.io/badge/Proyecto-02-FFD426?style=for-the-badge&labelColor=111111)](#)
+[![Versión](https://img.shields.io/badge/versi%C3%B3n-2.0.0-FFD426?style=for-the-badge&labelColor=111111)](package.json)
 [![ANTLR](https://img.shields.io/badge/ANTLR-4-FFD426?style=for-the-badge&labelColor=111111)](https://www.antlr.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-FFD426?style=for-the-badge&labelColor=111111)](https://www.typescriptlang.org/)
-[![Tests](https://img.shields.io/badge/tests-132%20passing-32D583?style=for-the-badge&labelColor=111111)](#calidad-y-pruebas)
+[![Tests](https://img.shields.io/badge/tests-133%20passing-32D583?style=for-the-badge&labelColor=111111)](#calidad-y-pruebas)
 [![License](https://img.shields.io/badge/license-MIT-FFD426?style=for-the-badge&labelColor=111111)](LICENSE)
 
 <img src="docs/assets/compiscript-project2-pipeline.png" alt="Pipeline de Compiscript: código, lexer, parser, semántica y TAC" width="100%" />
@@ -27,7 +28,7 @@ Este proyecto extiende el frontend de Compiscript construido con ANTLR 4 y añad
 ```text
 Código fuente → Lexer → Parser/CST → Semántica → TAC
                                             ├── temporales y etiquetas
-                                            ├── bloques básicos
+                                            ├── bloques básicos y CFG
                                             ├── registros de activación
                                             └── layouts de clases
 ```
@@ -46,8 +47,8 @@ Código fuente → Lexer → Parser/CST → Semántica → TAC
 | Datos compuestos | Arreglos, propiedades, objetos, constructores, métodos y herencia |
 | Almacenamiento | Temporales reutilizables, offsets, tamaños, alineación y registros de activación |
 | Clases | Layouts deterministas de campos y resolución de métodos heredados |
-| Visualización | TAC textual, bloques básicos, tabla de símbolos, ámbitos, árboles y frames |
-| Evidencia | Ejemplos positivos y negativos, exportaciones y 132 pruebas automatizadas |
+| Visualización | TAC textual, bloques básicos, CFG, tabla de símbolos, ámbitos, árboles y frames |
+| Evidencia | Ejemplos positivos y negativos, exportaciones y 133 pruebas automatizadas |
 
 ## De la semántica al almacenamiento
 
@@ -74,7 +75,7 @@ La tabla de símbolos no solo conserva nombres y tipos. En modo TAC, cada símbo
 - Operandos asociados con símbolos, ámbitos, frames y offsets.
 - Traducción de llamadas, parámetros, retornos, arreglos, campos y objetos.
 - Capturas de closures mediante `LOAD_CAPTURE`, `STORE_CAPTURE` y `MAKE_CLOSURE`.
-- Bloques básicos y destinos de salto verificables.
+- Bloques básicos y aristas de flujo derivados en el núcleo TAC, con destinos de salto verificables y terminadores sin caídas espurias.
 - Layouts de clases y registros para global, funciones, métodos y constructores.
 - Bloqueo controlado de TAC cuando una fase anterior contiene errores.
 
@@ -121,7 +122,7 @@ print resultado
 
 ### Requisitos
 
-- Node.js 20 o superior.
+- Node.js 22.12 o superior.
 - npm.
 - Windows, macOS o Linux para el modo web; Electron para escritorio.
 
@@ -131,7 +132,7 @@ print resultado
 git clone https://github.com/DanielBarillasM/Proyecto-02_CDC_seccion-10_Grupo-DragonsSlayers-2.0_Version-Final.git
 Set-Location -LiteralPath ".\Proyecto-02_CDC_seccion-10_Grupo-DragonsSlayers-2.0_Version-Final"
 
-npm.cmd install
+npm.cmd ci
 npm.cmd run check
 npm.cmd test
 npm.cmd run dev
@@ -145,7 +146,7 @@ Abre `http://localhost:3000` en el navegador.
 git clone https://github.com/DanielBarillasM/Proyecto-02_CDC_seccion-10_Grupo-DragonsSlayers-2.0_Version-Final.git
 cd Proyecto-02_CDC_seccion-10_Grupo-DragonsSlayers-2.0_Version-Final
 
-npm install
+npm ci
 npm run check
 npm test
 npm run dev
@@ -194,13 +195,13 @@ npm.cmd run cli -- examples/tac/16_error_semantico.cps --mode tac
 
 ## Calidad y pruebas
 
-Estado verificado de la versión final:
+Estado verificado de la versión 2.0.0:
 
 | Verificación | Resultado |
 | --- | ---: |
 | Archivos de prueba | 8 |
-| Pruebas automatizadas | **132 aprobadas** |
-| Pruebas TAC directas | 14 |
+| Pruebas automatizadas | **133 aprobadas** |
+| Pruebas TAC directas | 15 |
 | TypeScript `--noEmit` | Aprobado |
 | Build de producción | Aprobado |
 | Revisión del IDE en navegador | 0 errores de consola |
@@ -224,7 +225,9 @@ La suite valida determinismo, precedencia, ciclos, llamadas, arreglos, ternarios
 │   ├── semantic/
 │   ├── rubric/
 │   └── tac/
-├── docs/                  # Arquitectura, auditoría, matriz e informe heredado
+├── docs/                  # Arquitectura, auditoría, matriz e informes
+├── presentation/          # Presentación HTML vigente del Proyecto 2
+├── .github/workflows/     # Verificación y release multiplataforma
 ├── electron/              # Proceso principal de escritorio
 ├── public/                # Recursos estáticos del IDE
 └── TAC_DESIGN.md          # Diseño detallado de la representación intermedia
@@ -241,16 +244,21 @@ La suite valida determinismo, precedencia, ciclos, llamadas, arreglos, ternarios
 
 > Los paquetes macOS deben generarse en macOS o en un runner compatible. Para Linux se recomienda una instalación nativa, WSL o un contenedor Linux.
 
+El workflow `Verify and release` ejecuta verificación, pruebas, build y TAC antes de empaquetar. Los tags `v*` publican los artefactos aprobados en GitHub Releases; una ejecución manual conserva los paquetes como artefactos del workflow.
+
 ## Documentación
 
 - [Diseño de generación TAC](TAC_DESIGN.md)
-- [Arquitectura del proyecto](docs/ARQUITECTURA_PROYECTO_1.md)
+- [Informe del Proyecto 2 (PDF)](docs/informe/INFORME_PROYECTO_02.pdf)
+- [Fuente LaTeX del informe](docs/informe/INFORME_PROYECTO_02.tex)
+- [Presentación del Proyecto 2](presentation/compiscript-proyecto-2.html)
+- [Arquitectura del proyecto](docs/ARQUITECTURA_PROYECTO_2.md)
 - [Matriz de requisitos](docs/MATRIZ_REQUISITOS.md)
-- [Auditoría técnica](docs/AUDITORIA_PROYECTO_1.md)
+- [Auditoría técnica](docs/AUDITORIA_PROYECTO_2.md)
 - [Decisiones semánticas](docs/DECISIONES_SEMANTICAS.md)
 - [Índice documental](docs/README.md)
 
-Los archivos que conservan `PROYECTO_1` en el nombre documentan el frontend heredado. La implementación vigente del Proyecto 2 y sus diferencias están descritas en este README, `TAC_DESIGN.md`, la matriz y la auditoría.
+Los archivos que conservan `PROYECTO_1` en el nombre documentan el frontend heredado. El informe, la presentación, este README, `TAC_DESIGN.md`, la matriz y la auditoría describen la versión vigente del Proyecto 2.
 
 ## Tecnologías
 

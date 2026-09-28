@@ -15,6 +15,8 @@ Esta matriz contrasta el enunciado de análisis semántico con la implementació
 | Bloqueo ante errores previos | `analyze.ts`, pruebas TAC | Cubierto |
 | Ejemplos correctos y erróneos | `examples/tac` | Cubierto |
 | CLI y exportaciones | `src/cli/run.ts`, `src/lib/downloads.ts` | Cubierto |
+| Bloques básicos y CFG | `src/tac/controlFlow.ts`, `TacGenerationResult`, pruebas TAC | Cubierto |
+| Verificación y empaquetado multiplataforma | `.github/workflows/release.yml` | Cubierto; la publicación ocurre con tags `v*` |
 
 ## Reglas semánticas
 

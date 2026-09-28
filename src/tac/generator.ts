@@ -38,6 +38,7 @@ import type { ScopeInfo, ScopeKind } from "../semantic/scopes";
 import type { SymbolEntry } from "../semantic/symbols";
 import { T, type SemanticType } from "../semantic/semanticTypes";
 import { LabelFactory, TemporaryAllocator, type Temporary } from "./allocators";
+import { buildTacControlFlow } from "./controlFlow";
 import {
   emptyTacResult,
   formatTac,
@@ -128,10 +129,13 @@ class TacGenerator {
       this.emit("PROGRAM_END", {}, this.program);
       this.temps.endFrame(this.currentFrameId);
       this.finalizeFrames();
+      const controlFlow = buildTacControlFlow(this.instructions);
       return {
         status: "completed",
         instructions: this.instructions,
         formattedCode: formatTac(this.instructions),
+        basicBlocks: controlFlow.blocks,
+        controlFlowEdges: controlFlow.edges,
         activationRecords: [...this.frameById.values()],
         classLayouts: this.classLayouts,
         diagnostics: this.diagnostics,

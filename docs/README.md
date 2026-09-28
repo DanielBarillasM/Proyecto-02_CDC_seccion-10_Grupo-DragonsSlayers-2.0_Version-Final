@@ -6,14 +6,16 @@ El alcance termina en TAC: no se interpreta el programa ni se genera ensamblador
 
 | Documento | Uso recomendado |
 | --- | --- |
-| `ARQUITECTURA_PROYECTO_1.md` | Comprender el frontend heredado y su extensión con TAC, layouts y registros de activación |
+| `ARQUITECTURA_PROYECTO_2.md` | Comprender el frontend heredado y su extensión con TAC, layouts y registros de activación |
 | `DECISIONES_SEMANTICAS.md` | Justificar `float`, `switch`, ámbitos, inferencia y otras políticas |
-| `AUDITORIA_PROYECTO_1.md` | Revisar el frontend heredado, la extensión TAC y la evidencia ejecutable |
+| `AUDITORIA_PROYECTO_2.md` | Revisar el frontend heredado, la extensión TAC y la evidencia ejecutable |
 | `MATRIZ_REQUISITOS.md` | Relacionar cada regla del enunciado con implementación y pruebas |
 | `../TAC_DESIGN.md` | Diseño vigente de instrucciones, temporales, control de flujo, frames y clases |
+| `informe/INFORME_PROYECTO_02.tex` | Fuente LaTeX del informe técnico vigente del Proyecto 2 |
+| `informe/INFORME_PROYECTO_02.pdf` | Informe compilado del Proyecto 2 |
+| `../presentation/compiscript-proyecto-2.html` | Presentación navegable vigente del Proyecto 2 |
 | `informe/INFORME_PROYECTO_01.tex` | Informe histórico del frontend del Proyecto 1; no documenta por sí solo TAC |
 | `informe/INFORME_PROYECTO_01.pdf` | Compilación histórica del informe del Proyecto 1 |
-| `../presentation/compiscript-proyecto-1.html` | Presentación histórica del Proyecto 1 |
 | [Release heredado V1.2.0](https://github.com/DanielBarillasM/Proyecto-01_CDC_seccion-10_Grupo-DragonsSlayers-2.0/releases/tag/Compiscript-Semantic-IDE-V1.2.0) | Binario del Proyecto 1; no representa la generación TAC actual |
 
 Los documentos del Laboratorio 1, copias del enunciado y resúmenes históricos se retiraron para evitar que se confundan con el alcance actual.
@@ -22,9 +24,9 @@ Para casos ejecutables y trazables consulte `../examples/semantic/README.md` y `
 
 ## Estado documental verificado
 
-La documentación fue contrastada con el árbol de trabajo del Proyecto 2 el 20 de septiembre de 2026. TypeScript y el build terminan correctamente, Vite transforma **3426 módulos** y Vitest ejecuta **132 pruebas en 8 archivos**. La evidencia cubre lexer, parser, semántica, tabla de símbolos y generación TAC.
+La documentación fue contrastada con la versión 2.0.0 del Proyecto 2 el 28 de septiembre de 2026. La verificación reproducible comprende TypeScript, **133 pruebas en 8 archivos**, build de producción y ejecución del caso integral TAC. La evidencia cubre lexer, parser, semántica, tabla de símbolos, bloques básicos, CFG y generación TAC.
 
-El [release V1.2.0](https://github.com/DanielBarillasM/Proyecto-01_CDC_seccion-10_Grupo-DragonsSlayers-2.0/releases/tag/Compiscript-Semantic-IDE-V1.2.0) pertenece al Proyecto 1 y se conserva únicamente como referencia histórica. La versión TAC actual debe compilarse desde este repositorio con los scripts descritos en el README hasta que exista un release específico del Proyecto 2.
+El [release V1.2.0](https://github.com/DanielBarillasM/Proyecto-01_CDC_seccion-10_Grupo-DragonsSlayers-2.0/releases/tag/Compiscript-Semantic-IDE-V1.2.0) pertenece al Proyecto 1 y se conserva únicamente como referencia histórica. La versión 2.0.0 se compila desde este repositorio; el workflow `.github/workflows/release.yml` verifica y empaqueta Windows, macOS y Linux, y publica los artefactos cuando se crea un tag `v*`.
 
 ## Recursos visuales vigentes
 

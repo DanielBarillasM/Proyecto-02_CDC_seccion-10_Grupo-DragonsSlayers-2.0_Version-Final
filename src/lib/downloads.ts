@@ -95,6 +95,8 @@ export function tacReportToText(result: AnalyzeResult): string {
     `Temporales reutilizados: ${tac.metrics.temporariesReuseCount}`,
     `Pico de temporales vivos: ${tac.metrics.peakLiveTemporaries}`,
     `Etiquetas: ${tac.metrics.labelCount}`,
+    `Bloques básicos: ${tac.basicBlocks.length}`,
+    `Aristas de flujo: ${tac.controlFlowEdges.length}`,
     `Marcos de activación: ${tac.metrics.activationRecordCount}`,
     "",
     tac.formattedCode || "(sin instrucciones)",

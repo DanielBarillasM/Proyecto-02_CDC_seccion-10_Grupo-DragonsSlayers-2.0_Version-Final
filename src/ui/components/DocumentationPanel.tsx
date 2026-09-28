@@ -20,7 +20,7 @@ export function DocumentationPanel() {
             </li>
             <li>Si no hay errores léxicos ni sintácticos, el visitor semántico valida tipos y nombres.</li>
             <li>Si las tres fases anteriores son válidas, el generador emite TAC determinista.</li>
-            <li>La aplicación muestra diagnósticos, símbolos, ámbitos, TAC, bloques básicos y frames.</li>
+            <li>La aplicación muestra diagnósticos, símbolos, ámbitos, TAC, bloques básicos, aristas del CFG y frames.</li>
           </ol>
         </AccordionContent>
       </AccordionItem>
@@ -107,7 +107,7 @@ export function DocumentationPanel() {
       <AccordionItem value="comandos">
         <AccordionTrigger>Comandos</AccordionTrigger>
         <AccordionContent>
-          <pre className="overflow-auto rounded border-2 bg-card p-2 text-xs">{`npm install
+          <pre className="overflow-auto rounded border-2 bg-card p-2 text-xs">{`npm ci
 npm run generate
 npm run check
 npm test

@@ -34,6 +34,8 @@ La pestaña TAC muestra métricas, búsqueda textual y filtro por opcode. Las ac
 - `.csv`: instrucciones con operandos, ámbito, frame y ubicación fuente.
 - reporte `.txt`: métricas, código y resumen de marcos.
 
+`buildTacControlFlow()` deriva bloques a partir de etiquetas, destinos de salto y la instrucción posterior a cada terminador. `TacGenerationResult` expone `basicBlocks` y `controlFlowEdges`; la pestaña visual consume ese mismo resultado sin reconstruirlo en React. `RETURN`, `FUNC_END` y `PROGRAM_END` terminan el flujo y no producen aristas de caída.
+
 ## Garantías
 
 - Determinismo entre ejecuciones.

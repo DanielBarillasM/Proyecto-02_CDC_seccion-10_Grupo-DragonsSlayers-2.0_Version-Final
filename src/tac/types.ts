@@ -35,6 +35,20 @@ export interface TacInstruction {
   sourceText?: string;
 }
 
+export interface TacBasicBlock {
+  id: string;
+  startIndex: number;
+  endIndex: number;
+  label?: string;
+  instructionIndices: number[];
+}
+
+export interface TacControlFlowEdge {
+  from: string;
+  to: string;
+  kind: "fallthrough" | "jump" | "true" | "false";
+}
+
 export type TacStatus = "not-requested" | "skipped" | "completed" | "failed";
 
 export interface TacDiagnostic {
@@ -86,6 +100,8 @@ export interface TacGenerationResult {
   skipReason?: string;
   instructions: TacInstruction[];
   formattedCode: string;
+  basicBlocks: TacBasicBlock[];
+  controlFlowEdges: TacControlFlowEdge[];
   activationRecords: ActivationRecord[];
   classLayouts: ClassLayout[];
   diagnostics: TacDiagnostic[];
@@ -105,6 +121,8 @@ export const emptyTacResult = (status: TacStatus = "not-requested", skipReason?:
   skipReason,
   instructions: [],
   formattedCode: "",
+  basicBlocks: [],
+  controlFlowEdges: [],
   activationRecords: [],
   classLayouts: [],
   diagnostics: [],
