@@ -100,7 +100,7 @@ Las referencias a variables, clases, campos y métodos incrementan el contador d
 
 ### Presentación
 
-`src/ui/App.tsx` orquesta un IDE con barra de menú, barra de herramientas, barra lateral, editor con pestañas, panel de problemas y dock derecho. La fase semántica utiliza:
+`src/ui/App.tsx` orquesta un IDE con barra de menú, barra de herramientas, barra lateral, editor con pestañas, panel de problemas y dock derecho. `src/lib/ideAnalysis.ts` mantiene una única frontera para la ejecución gráfica: cualquier fuente visible se envía a `analyzeInput(..., "tac")`. Por ello, editar o cargar un `.cps` no desactiva la representación intermedia; un programa válido abre TAC y uno inválido conserva el estado `skipped` con su causa. La interfaz utiliza:
 
 - `ActivitySidebar`, con `ExamplesExplorer` y `CompilerGuide`;
 - `EditorTabs`, con `CodeEditor` basado en Monaco para edición y resaltado;
@@ -119,7 +119,7 @@ La interfaz no decide si un programa es válido. Su responsabilidad es explicar 
 3. Los archivos generados por ANTLR no se editan manualmente.
 4. Toda declaración de clase tiene identidad independiente de su nombre.
 5. La resolución de nombres siempre parte del ámbito activo.
-6. UI y CLI ejecutan el mismo pipeline.
+6. UI y CLI ejecutan el mismo pipeline; la UI solicita la variante completa con TAC para ejemplos, edición y archivos propios.
 7. Los resultados de una corrida no contaminan la siguiente.
 
 ## Estrategia de pruebas

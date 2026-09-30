@@ -1344,6 +1344,13 @@ o errores semánticos). El bloqueo se verificó ejecutando los tres ejemplos de
 \archivo{16\_error\_semantico.cps} en modo TAC: los tres reportan
 \codigo{status: "skipped"} con la razón correcta y ninguno emite instrucciones.
 
+La interfaz invoca este recorrido mediante \archivo{src/lib/ideAnalysis.ts}. Su
+función \codigo{analyzeForIde} envía siempre la fuente visible a
+\codigo{analyzeInput(..., "tac")}; por tanto, seleccionar un ejemplo, editar el
+código o cargar un archivo \archivo{.cps} conserva el mismo pipeline completo. Si
+la entrada es válida, el dock abre la pestaña TAC; si falla alguna fase, se abre el
+resumen y la pestaña TAC conserva \codigo{status: "skipped"} con la causa exacta.
+
 \section{Modelo de instrucción}
 
 Cada instrucción (\codigo{TacInstruction}, \archivo{src/tac/types.ts}) tiene un
@@ -1566,14 +1573,16 @@ Los principios aplicados son:
 \archivo{EditorTabs} contiene el editor Monaco con resaltado de sintaxis
 \Compiscript, carga de \archivo{.cps}, edición, limpieza, copia y descarga. Se
 muestran nombre, cantidad de líneas, caracteres, posición del cursor y estado de
-preparación.
+preparación. La carga y la edición cambian únicamente la fuente activa, no la fase
+solicitada: cualquier programa propio válido puede generar TAC desde la interfaz.
 
 \section{Navegación por fases}
 
 La barra lateral \archivo{ActivitySidebar} separa ejemplos y ruta de análisis. El
 dock derecho \archivo{RightDock} organiza resultado, símbolos, ámbitos, árboles,
-documentación y exportación. Esto permite estudiar tokenización, observar el CST,
-inspeccionar el pipeline completo o consultar la documentación sin cambiar de vista.
+TAC, flujo visual, documentación, exportación y pruebas. Esto permite estudiar
+tokenización, observar el CST, inspeccionar el pipeline completo o consultar la
+documentación sin cambiar de vista.
 
 \section{Explorador semántico}
 
@@ -2012,11 +2021,12 @@ regenerar si la gramática no cambió.
 \section{Uso del IDE}
 
 \begin{enumerate}
-  \item seleccionar la fase;
   \item elegir un ejemplo, escribir código o cargar \archivo{.cps};
-  \item ejecutar el análisis;
-  \item revisar aceptación y conteos;
-  \item inspeccionar diagnósticos, símbolos, scopes y árboles;
+  \item ejecutar el pipeline completo;
+  \item revisar aceptación, conteos y estado de las cuatro fases;
+  \item si el programa es válido, inspeccionar TAC, CFG, frames y layouts;
+  \item si contiene errores, revisar los diagnósticos y la causa de omisión de TAC;
+  \item inspeccionar símbolos, scopes y árboles;
   \item exportar evidencia si se necesita.
 \end{enumerate}
 

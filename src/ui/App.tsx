@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
-import { analyzeInput } from "../lib/analyze";
 import { downloadText } from "../lib/downloads";
 import { exampleCase } from "../lib/examples";
+import { analyzeForIde } from "../lib/ideAnalysis";
 import type { AnalysisMode, AnalyzeResult } from "../lib/types";
 import type { ScopeInfo } from "../semantic/scopes";
 import { ActivitySidebar } from "./components/ActivitySidebar";
@@ -100,8 +100,9 @@ export function App() {
 
     try {
       await new Promise((resolve) => setTimeout(resolve, 0));
-      setResult(analyzeInput(inputValue, mode === "tac" ? "tac" : "semantic"));
-      setActiveDockTab(mode === "tac" ? "tac" : "resultado");
+      const nextResult = analyzeForIde(inputValue);
+      setResult(nextResult);
+      setActiveDockTab(nextResult.tac.status === "completed" ? "tac" : "resultado");
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
       if (message.includes("Cannot find module") || message.includes("generated")) {

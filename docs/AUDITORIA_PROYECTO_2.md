@@ -1,6 +1,6 @@
 # Auditoría técnica del frontend heredado y Proyecto 2
 
-**Última verificación:** 28 de septiembre de 2026, sobre la versión 2.0.0 del Proyecto 2 con generación TAC integrada.
+**Última verificación:** 30 de septiembre de 2026, sobre la versión 2.0.0 del Proyecto 2 con generación TAC integrada.
 
 ## Resultado ejecutivo
 
@@ -15,6 +15,7 @@ Estado final verificado:
 - generador TAC conectado al CST y a la información semántica;
 - temporales reutilizables, etiquetas, bloques básicos, aristas de flujo, layouts de clase y registros de activación;
 - CLI, interfaz, exportaciones, ejemplos y documentación actualizados para la cuarta fase;
+- archivos `.cps` cargados o editados ejecutan el pipeline completo y generan TAC cuando son válidos;
 - informe heredado del Proyecto 1 identificado como material histórico, no como evidencia completa de TAC.
 
 ## Evidencia reproducible del cierre
@@ -27,8 +28,8 @@ La verificación final se ejecutó desde una instalación limpia en la carpeta d
 | `npm run check` | TypeScript finalizó sin errores |
 | `npm test` | 8 archivos y 133 pruebas aprobadas con Vitest 5.0.2 |
 | `npm run cli:tac` | caso integral aceptado: 53 instrucciones, 14 bloques, 8 aristas y 4 frames |
-| `npm run build` | build de producción aprobado; 3435 módulos transformados |
-| Revisión en navegador | ejemplo TAC aceptado, 66 instrucciones, 20 bloques, 0 problemas y panel visual operativo |
+| `npm run build` | build de producción aprobado; 3436 módulos transformados |
+| Revisión en navegador | ejemplo TAC integrado aceptado con 66 instrucciones y 20 bloques; carga real de `08_switch_try.cps` aceptada con 25 instrucciones y 9 bloques; carga real de `16_error_semantico.cps` reportó 2 errores y omitió TAC con causa explícita |
 | Consola del navegador | 0 errores y 0 advertencias |
 | Informe técnico | 81 páginas; 0 desbordamientos, referencias o citas indefinidas |
 | Enlaces y workflow | enlaces Markdown locales existentes y YAML del workflow válido |
@@ -44,6 +45,7 @@ El aviso de Vite sobre el tamaño del chunk principal permanece como recomendaci
 | Alta | Inferencia de campos | Un método podía usar un campo antes de que su inicializador fuera analizado, haciendo el resultado dependiente del orden. | Se procesan campos antes que métodos y se restaura el orden del árbol presentado. | Regresión de campo declarado después del método. |
 | Alta | Retornos | Las funciones sin anotación se trataban como `void`. | Se recopilan retornos observados, se calcula un tipo común y se actualiza la firma. | Regresión de retorno `integer` inferido. |
 | Alta | Referencias | Accesos a clases, campos y métodos no actualizaban todos los contadores. | Miembros conservan `symbolId` y cada resolución registra la referencia real. | Prueba de referencias de clase/campo/método. |
+| Crítica | Archivo propio y TAC | Editar o cargar un `.cps` cambiaba la fuente a modo `custom`, pero `App` solicitaba únicamente análisis semántico; el evaluador no podía generar TAC para su archivo desde la GUI. | `analyzeForIde()` ejecuta siempre `analyzeInput(..., "tac")` sobre la fuente visible y `App` abre TAC cuando se completa o muestra la causa del bloqueo. | Pruebas TAC reutilizan la frontera del IDE; verificación real del selector `.cps`. |
 | Alta | Tabla de símbolos | No existía una operación pública y acotada para demostrar actualización. | Se añadió `updateSymbol` con invariantes de identidad y se reutiliza en inicialización/captura. | Suite directa de `ScopeManager`. |
 | Alta | Gramática | La gramática activa aceptaba instrucciones sin bloque en estructuras de control, a diferencia del archivo oficial adjunto. | `if`, ciclos y `foreach` vuelven a requerir `block`; se regeneró ANTLR. | Prueba sintáctica de llaves obligatorias. |
 | Alta | Ejemplos | El ejemplo integral y el caso de recursión usaban `if` sin llaves, por lo que fallaron después de alinear la gramática. | Se actualizaron ejemplos, fixture integrado y prueba de recursión. | Suite integral aprobada. |

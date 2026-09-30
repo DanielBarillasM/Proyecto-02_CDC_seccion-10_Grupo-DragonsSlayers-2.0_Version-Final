@@ -1,20 +1,22 @@
 import { describe, expect, it } from "vitest";
 import { analyzeInput } from "../lib/analyze";
 import { tacReportToText, tacToCsv } from "../lib/downloads";
+import { analyzeForIde } from "../lib/ideAnalysis";
 import { LabelFactory, TemporaryAllocator } from "../tac/allocators";
 
 describe("TAC core", () => {
   it("generates deterministic TAC for valid input", () => {
     const source = "let a: integer = 2 + 3; print(a);";
-    const first = analyzeInput(source, "tac");
-    const second = analyzeInput(source, "tac");
+    const first = analyzeForIde(source);
+    const second = analyzeForIde(source);
+    expect(first.mode).toBe("tac");
     expect(first.tac.status).toBe("completed");
     expect(first.tac.formattedCode).toBe(second.tac.formattedCode);
     expect(first.tac.instructions.length).toBeGreaterThanOrEqual(2);
   });
 
   it("skips TAC when semantic errors exist", () => {
-    const result = analyzeInput("print(missing);", "tac");
+    const result = analyzeForIde("print(missing);");
     expect(result.tac.status).toBe("skipped");
     expect(result.tac.skipReason).toContain("errores semánticos");
     expect(result.semantic.errors.length).toBeGreaterThan(0);
@@ -140,7 +142,7 @@ describe("TAC core", () => {
   });
 
   it("skips TAC after lexical or syntactic failures", () => {
-    expect(analyzeInput("let x: integer = 1; @", "tac").tac.status).toBe("skipped");
-    expect(analyzeInput("let x: integer = ;", "tac").tac.status).toBe("skipped");
+    expect(analyzeForIde("let x: integer = 1; @").tac.status).toBe("skipped");
+    expect(analyzeForIde("let x: integer = ;").tac.status).toBe("skipped");
   });
 });

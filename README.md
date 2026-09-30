@@ -23,7 +23,7 @@ Un entorno visual para recorrer el frontend de Compiscript y producir código in
 
 ## Sobre el proyecto
 
-Este proyecto extiende el frontend de Compiscript construido con ANTLR 4 y añade una cuarta fase observable: la generación de **código intermedio TAC** (*Three-Address Code*). El IDE permite editar o cargar programas `.cps`, ejecutar cada análisis y examinar sus resultados sin depender de la consola.
+Este proyecto extiende el frontend de Compiscript construido con ANTLR 4 y añade una cuarta fase observable: la generación de **código intermedio TAC** (*Three-Address Code*). El IDE permite editar o cargar programas `.cps`, ejecutar el pipeline completo y examinar sus resultados sin depender de la consola. Toda fuente visible —incluidos archivos propios y código editado— se analiza en modo TAC: si es válida se genera la representación intermedia y, si contiene errores, la interfaz explica por qué fue omitida.
 
 ```text
 Código fuente → Lexer → Parser/CST → Semántica → TAC
@@ -82,7 +82,7 @@ La tabla de símbolos no solo conserva nombres y tipos. En modo TAC, cada símbo
 ### IDE y herramientas
 
 - Editor Monaco con resaltado para Compiscript.
-- Explorador de ejemplos y selección de archivos `.cps`.
+- Explorador de ejemplos y selección de archivos `.cps`; los archivos propios conservan la generación TAC.
 - Pipeline visual **Lexer → Parser → Semántica → TAC**.
 - Paneles para problemas, símbolos, ámbitos, árboles, TAC y flujo visual.
 - Exportaciones en texto, CSV y JSON.

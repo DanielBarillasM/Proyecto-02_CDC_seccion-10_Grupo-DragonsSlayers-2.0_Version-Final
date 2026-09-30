@@ -6,11 +6,11 @@ El módulo `src/tac/generator.ts` transforma el CST tipado por ANTLR y el result
 
 ## Pipeline
 
-1. `analyzeInput()` ejecuta lexer y parser.
+1. `analyzeForIde()` solicita el pipeline completo sobre la fuente visible y delega en `analyzeInput(..., "tac")`.
 2. El visitante semántico construye símbolos, ámbitos y diagnósticos.
 3. `generateTac()` recibe únicamente un árbol aceptado y emite instrucciones tipadas.
 4. El resultado expone código formateado, instrucciones, métricas y marcos de activación.
-5. La interfaz permite inspeccionar, filtrar y exportar TAC.
+5. La interfaz permite inspeccionar, filtrar y exportar TAC tanto para ejemplos como para código editado o cargado desde un archivo `.cps`.
 
 ## Modelo de instrucciones
 
@@ -122,4 +122,4 @@ Cada layout conserva campos heredados, offsets, tamaño de instancia y etiquetas
 
 ## Evidencia
 
-La suite `src/__tests__/tac.test.ts` verifica contenido concreto del TAC, precedencia, ciclos, llamadas, arreglos, ternario, foreach, determinismo, almacenamiento, frames, liberación de temporales y bloqueo por errores. Los archivos de `examples/tac` permiten repetir estas comprobaciones desde la interfaz o la CLI.
+La suite `src/__tests__/tac.test.ts` verifica contenido concreto del TAC, precedencia, ciclos, llamadas, arreglos, ternario, foreach, determinismo, almacenamiento, frames, liberación de temporales y bloqueo por errores. Sus casos de éxito y rechazo pasan también por `analyzeForIde()`, la misma frontera usada por la interfaz. Los archivos de `examples/tac` pueden cargarse como `.cps` en el IDE o ejecutarse desde la CLI; una fuente válida genera TAC y una fuente inválida muestra la causa del bloqueo.
