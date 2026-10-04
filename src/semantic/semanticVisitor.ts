@@ -147,10 +147,6 @@ export function runSemanticAnalysis(program: ProgramContext): SemanticAnalysisOu
 
 class SemanticAnalyzer extends AbstractParseTreeVisitor<SemanticTreeNode> implements CompiscriptVisitor<SemanticTreeNode> {
   private functionStack: FunctionContext[] = [];
-  /** Pila de ámbitos de función activos al momento de cada declaración de
-   * variable, usada para detectar cuándo una función anidada "captura"
-   * una variable de un ámbito de función externo (closures). */
-  private funcScopeStack: string[] = [];
 
   constructor(
     private scopes: ScopeManager,
@@ -206,7 +202,7 @@ class SemanticAnalyzer extends AbstractParseTreeVisitor<SemanticTreeNode> implem
   public visitProgram(ctx: ProgramContext): SemanticTreeNode {
     // Fase 1: registrar en el ámbito global cada clase y función de nivel
     // superior (hoisting), para permitir llamadas/usos adelantados.
-    this.hoistTopLevel(ctx.statement());
+    this.hoistDeclarations(ctx.statement());
     const children = ctx.statement().map((statement) => statement.accept(this));
     return createSemanticNode("program", "program", { location: locOf(ctx), scopeId: this.scopes.rootId, children });
   }
@@ -214,10 +210,6 @@ class SemanticAnalyzer extends AbstractParseTreeVisitor<SemanticTreeNode> implem
   // ────────────────────────────────────────────────────────────────────
   // Hoisting: declara símbolos de función/clase antes de visitar cuerpos.
   // ────────────────────────────────────────────────────────────────────
-
-  private hoistTopLevel(statements: StatementContext[]): void {
-    this.hoistDeclarations(statements);
-  }
 
   /** Hoisting local de funciones y clases en el ámbito activo. Permite
    * recursión, referencias adelantadas y funciones anidadas sin perder
@@ -474,7 +466,6 @@ class SemanticAnalyzer extends AbstractParseTreeVisitor<SemanticTreeNode> implem
         : T.unknown;
 
     const functionScope = this.scopes.enterScope("function", name, declaration);
-    this.funcScopeStack.push(functionScope.id);
 
     if (isMethod && ownerClass) {
       this.scopes.declare({
@@ -541,7 +532,6 @@ class SemanticAnalyzer extends AbstractParseTreeVisitor<SemanticTreeNode> implem
     }
 
     this.functionStack.pop();
-    this.funcScopeStack.pop();
     this.scopes.exitScope(locOf(ctx.block()));
 
     return createSemanticNode(
@@ -921,14 +911,7 @@ class SemanticAnalyzer extends AbstractParseTreeVisitor<SemanticTreeNode> implem
     }
 
     if (!ctx.expression()) {
-      if (current.hasExplicitReturnType && current.returnType.kind !== "primitive" ) {
-        this.report(
-          "SEM008",
-          "error",
-          locOf(ctx),
-          `La función '${current.name}' debe devolver un valor de tipo '${displayType(current.returnType)}'.`
-        );
-      } else if (current.hasExplicitReturnType && !(current.returnType.kind === "primitive" && current.returnType.name === "void")) {
+      if (current.hasExplicitReturnType && !(current.returnType.kind === "primitive" && current.returnType.name === "void")) {
         this.report(
           "SEM008",
           "error",
@@ -1354,7 +1337,7 @@ class SemanticAnalyzer extends AbstractParseTreeVisitor<SemanticTreeNode> implem
   /** Si `symbol` fue declarado en un ámbito de función distinto de la
    * función léxica actual, se marca como "capturado" (closure). */
   private markCaptureIfNeeded(symbol: SymbolEntry): void {
-    const currentFuncScope = this.funcScopeStack[this.funcScopeStack.length - 1];
+    const currentFuncScope = this.functionStack[this.functionStack.length - 1]?.scopeId;
     if (!currentFuncScope) return;
     const declaredFuncScope = this.scopes.enclosingFunctionScope(symbol.scopeId);
     if (declaredFuncScope && declaredFuncScope.id !== currentFuncScope && symbol.kind !== "function" && symbol.kind !== "class") {
@@ -1479,18 +1462,11 @@ class SemanticAnalyzer extends AbstractParseTreeVisitor<SemanticTreeNode> implem
   }
 
   private checkArguments(
-    params: { name: string; type: SemanticType }[] | undefined,
+    params: { name: string; type: SemanticType }[],
     args: ExprResult[],
     loc: SourceLocation,
     description: string
   ): void {
-    if (!params) {
-      if (args.length > 0) {
-        // Sin firma conocida (p. ej. clase sin constructor explícito): no
-        // se valida cantidad/tipo de argumentos, solo se visitan.
-      }
-      return;
-    }
     if (params.length !== args.length) {
       this.report(
         "SEM006",

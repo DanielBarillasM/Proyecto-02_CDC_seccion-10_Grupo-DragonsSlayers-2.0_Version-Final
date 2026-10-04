@@ -84,6 +84,30 @@ describe("Análisis semántico — programas válidos", () => {
     expect(result.semantic.errors).toHaveLength(0);
   });
 
+  it("distingue capturas anidadas de parámetros y variables locales", () => {
+    const result = analyze(`
+      let globalValue: integer = 1;
+      function outer(seed: integer): integer {
+        let outerLocal: integer = seed;
+        function middle(): integer {
+          let middleLocal: integer = 2;
+          function inner(): integer {
+            return outerLocal + middleLocal + globalValue;
+          }
+          return inner();
+        }
+        middle();
+        let afterNested: integer = seed;
+        return afterNested;
+      }
+      print(outer(1));
+    `);
+
+    expect(result.accepted).toBe(true);
+    const capturedNames = result.semantic.symbols.filter((symbol) => symbol.captured).map((symbol) => symbol.name);
+    expect(capturedNames.sort()).toEqual(["middleLocal", "outerLocal"]);
+  });
+
   it("acepta arreglos homogéneos, foreach e indexación", () => {
     const result = analyze(`
       let nums: integer[] = [1, 2, 3];
@@ -135,6 +159,19 @@ describe("Análisis semántico — catálogo SEM001 a SEM021", () => {
 
   it("SEM008: retorno incompatible", () => {
     expect(codesOf(`function f(): integer { return "hola"; }`)).toContain("SEM008");
+  });
+
+  it.each(["integer", "integer[]", "Item"])("SEM008: return sin valor para %s", (returnType) => {
+    const result = analyze(`class Item {} function f(): ${returnType} { return; }`);
+    const errors = result.semantic.errors.filter((diagnostic) => diagnostic.code === "SEM008");
+    expect(errors).toHaveLength(1);
+    expect(errors[0].message).toBe(`La función 'f' debe devolver un valor de tipo '${returnType}'.`);
+  });
+
+  it("permite return sin valor en una función sin anotación", () => {
+    const result = analyze(`function f() { return; } f();`);
+    expect(result.accepted).toBe(true);
+    expect(result.semantic.errors).toHaveLength(0);
   });
 
   it("SEM009: return fuera de una función", () => {

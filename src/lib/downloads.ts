@@ -18,19 +18,7 @@ export function downloadText(filename: string, content: string, mimeType = "text
 /** Serializa todas las fases que realmente fueron ejecutadas. */
 export function resultToJson(result: AnalyzeResult): string {
   const payload = {
-    language: result.language,
-    mode: result.mode,
-    accepted: result.accepted,
-    summary: result.summary,
-    tokens: result.tokens,
-    lexicalErrors: result.lexicalErrors,
-    syntaxErrors: result.syntaxErrors,
-    parseTreeText: result.parseTreeText,
-    parseTreeNodes: result.parseTreeNodes,
-    formattedParseTree: result.formattedParseTree,
-    semantic: result.semantic,
-    tac: result.tac,
-    explanation: result.explanation,
+    ...result,
     generatedBy: "ANTLR 4 + antlr4ts + visitors semánticos y generador TAC TypeScript",
     project: "Proyecto 2: Compiscript Semantic & TAC IDE"
   };
