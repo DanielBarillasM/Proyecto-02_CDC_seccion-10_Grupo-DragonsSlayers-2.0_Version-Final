@@ -56,10 +56,6 @@ export function bodyGuaranteesReturn(statements: StatementContext[]): boolean {
  * la regla de terminación anterior. Devuelve el índice del primer
  * statement inalcanzable, o -1 si no hay ninguno. */
 export function findFirstUnreachableIndex(statements: StatementContext[]): number {
-  let terminated = false;
-  for (let i = 0; i < statements.length; i++) {
-    if (terminated) return i;
-    if (statementTerminates(statements[i])) terminated = true;
-  }
-  return -1;
+  const terminatorIndex = statements.findIndex(statementTerminates);
+  return terminatorIndex >= 0 && terminatorIndex < statements.length - 1 ? terminatorIndex + 1 : -1;
 }

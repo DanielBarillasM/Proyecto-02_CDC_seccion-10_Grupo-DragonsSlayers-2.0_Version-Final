@@ -499,6 +499,22 @@ describe("Análisis semántico — cobertura explícita de requisitos", () => {
     `)).toContain("SEM018");
   });
 
+  it.each([
+    ["", 0],
+    ["print(1);", 0],
+    ["return;", 0],
+    ["print(1); return;", 0],
+    ["return; print(1); print(2);", 2],
+    ["{ return; } print(1);", 1],
+    ["if (true) { return; } else { return; } print(1);", 1],
+    ["if (true) { return; } print(1);", 0]
+  ])("preserva el límite de código inalcanzable en %s", (body, warningCount) => {
+    const result = analyze(`function f() { ${body} }`);
+    expect(result.semantic.status).toBe("completed");
+    expect(result.semantic.errors).toHaveLength(0);
+    expect(result.semantic.diagnostics.filter((diagnostic) => diagnostic.code === "SEM018")).toHaveLength(warningCount);
+  });
+
   it("acepta return dentro de una función con tipo compatible", () => {
     const result = analyze(`function uno(): integer { return 1; } print(uno());`);
     expect(result.semantic.errors).toHaveLength(0);
