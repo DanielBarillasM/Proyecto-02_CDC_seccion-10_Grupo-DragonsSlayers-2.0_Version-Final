@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Braces } from "lucide-react";
 import type { AnalyzeResult } from "../../lib/types";
 import type { SemanticTreeNode } from "../../semantic/ast";
@@ -26,12 +27,17 @@ export function SemanticTreePanel({ result }: SemanticTreePanelProps) {
 }
 
 function SemanticNode({ node, depth }: { node: SemanticTreeNode; depth: number }) {
+  const [expanded, setExpanded] = useState(depth <= 3);
   const hasChildren = node.children.length > 0;
   const Container = hasChildren ? "details" : "div";
   const Heading = hasChildren ? "summary" : "div";
 
   return (
-    <Container open={hasChildren ? depth <= 3 : undefined} style={{ marginLeft: depth === 0 ? 0 : "1rem" }}>
+    <Container
+      open={hasChildren ? expanded : undefined}
+      onToggle={hasChildren ? (event) => setExpanded((event.currentTarget as HTMLDetailsElement).open) : undefined}
+      style={{ marginLeft: depth === 0 ? 0 : "1rem" }}
+    >
       <Heading
         className={`rounded border-2 px-2 py-1 text-left text-xs focus-visible:outline-2 focus-visible:outline-primary ${hasChildren ? "cursor-pointer" : ""} ${
           node.diagnostics.length > 0 ? "border-red-900 bg-red-200 text-red-900" : "border-transparent hover:border-border hover:bg-accent"
@@ -51,7 +57,7 @@ function SemanticNode({ node, depth }: { node: SemanticTreeNode; depth: number }
           </span>
         ))}
       </Heading>
-      {node.children.map((child) => (
+      {expanded && node.children.map((child) => (
         <SemanticNode key={child.id} node={child} depth={depth + 1} />
       ))}
     </Container>

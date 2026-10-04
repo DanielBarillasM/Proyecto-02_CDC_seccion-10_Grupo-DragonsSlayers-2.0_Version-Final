@@ -46,12 +46,13 @@ describe("native IDE controls", () => {
     expect(markup).not.toContain('role="button"');
   });
 
-  it("preserves semantic annotations and collapses branches beyond depth three", () => {
+  it("preserves semantic annotations and lazily renders closed branches beyond depth three", () => {
     const result = analyzeInput("print(1);", "semantic");
     let node: SemanticTreeNode = { id: "leaf", kind: "literal", label: "1", inferredType: "integer", diagnostics: [], children: [] };
     for (let depth = 4; depth >= 0; depth -= 1) {
       node = { id: `branch-${depth}`, kind: "block", label: `depth ${depth}`, diagnostics: ["SEM018"], children: [node] };
     }
+    node.inferredType = "integer";
     result.semantic.semanticTree = [node];
     const markup = renderToStaticMarkup(<SemanticTreePanel result={result} />);
     expect(markup.match(/<details\b/g)).toHaveLength(5);
@@ -59,6 +60,8 @@ describe("native IDE controls", () => {
     expect(markup.match(/<summary\b/g)).toHaveLength(5);
     expect(markup).toContain("integer");
     expect(markup).toContain("SEM018");
+    expect(markup).toContain("depth 4");
+    expect(markup).not.toContain(">1</strong>");
     expect(markup).not.toContain("<button");
   });
 });
