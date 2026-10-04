@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
 import { downloadText } from "../lib/downloads";
 import { exampleCase } from "../lib/examples";
-import { analyzeForIde } from "../lib/ideAnalysis";
+import { analyzeInput } from "../lib/analyze";
 import type { AnalysisMode, AnalyzeResult } from "../lib/types";
 import type { ScopeInfo } from "../semantic/scopes";
 import { ActivitySidebar } from "./components/ActivitySidebar";
@@ -100,7 +100,7 @@ export function App() {
 
     try {
       await new Promise((resolve) => setTimeout(resolve, 0));
-      const nextResult = analyzeForIde(inputValue);
+      const nextResult = analyzeInput(inputValue, "tac");
       setResult(nextResult);
       setActiveDockTab(nextResult.tac.status === "completed" ? "tac" : "resultado");
     } catch (error) {

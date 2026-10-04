@@ -15,7 +15,7 @@ Esta matriz contrasta el enunciado de análisis semántico con la implementació
 | Bloqueo ante errores previos | `analyze.ts`, pruebas TAC | Cubierto |
 | Ejemplos correctos y erróneos | `examples/tac` | Cubierto |
 | CLI y exportaciones | `src/cli/run.ts`, `src/lib/downloads.ts` | Cubierto |
-| Archivo propio en modo TAC | `src/lib/ideAnalysis.ts`, `src/ui/App.tsx`, selector `.cps` | Cubierto |
+| Archivo propio en modo TAC | `src/lib/analyze.ts`, `src/ui/App.tsx`, selector `.cps` | Cubierto |
 | Bloques básicos y CFG | `src/tac/controlFlow.ts`, `TacGenerationResult`, pruebas TAC | Cubierto |
 | Verificación y empaquetado multiplataforma | `.github/workflows/release.yml` | Cubierto; la publicación ocurre con tags `v*` |
 

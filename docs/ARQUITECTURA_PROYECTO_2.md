@@ -100,7 +100,7 @@ Las referencias a variables, clases, campos y métodos incrementan el contador d
 
 ### Presentación
 
-`src/ui/App.tsx` orquesta un IDE con barra de menú, barra de herramientas, barra lateral, editor con pestañas, panel de problemas y dock derecho. `src/lib/ideAnalysis.ts` mantiene una única frontera para la ejecución gráfica: cualquier fuente visible se envía a `analyzeInput(..., "tac")`. Por ello, editar o cargar un `.cps` no desactiva la representación intermedia; un programa válido abre TAC y uno inválido conserva el estado `skipped` con su causa. La interfaz utiliza:
+`src/ui/App.tsx` orquesta un IDE con barra de menú, barra de herramientas, barra lateral, editor con pestañas, panel de problemas y dock derecho. Cualquier fuente visible se envía directamente a `analyzeInput(..., "tac")`. Por ello, editar o cargar un `.cps` no desactiva la representación intermedia; un programa válido abre TAC y uno inválido conserva el estado `skipped` con su causa. La interfaz utiliza:
 
 - `ActivitySidebar`, con `ExamplesExplorer` y `CompilerGuide`;
 - `EditorTabs`, con `CodeEditor` basado en Monaco para edición y resaltado;

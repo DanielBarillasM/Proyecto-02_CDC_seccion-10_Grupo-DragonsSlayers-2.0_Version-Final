@@ -1344,9 +1344,9 @@ o errores semánticos). El bloqueo se verificó ejecutando los tres ejemplos de
 \archivo{16\_error\_semantico.cps} en modo TAC: los tres reportan
 \codigo{status: "skipped"} con la razón correcta y ninguno emite instrucciones.
 
-La interfaz invoca este recorrido mediante \archivo{src/lib/ideAnalysis.ts}. Su
-función \codigo{analyzeForIde} envía siempre la fuente visible a
-\codigo{analyzeInput(..., "tac")}; por tanto, seleccionar un ejemplo, editar el
+La interfaz invoca este recorrido desde \archivo{src/ui/App.tsx}, que envía
+siempre la fuente visible directamente a \codigo{analyzeInput(..., "tac")};
+por tanto, seleccionar un ejemplo, editar el
 código o cargar un archivo \archivo{.cps} conserva el mismo pipeline completo. Si
 la entrada es válida, el dock abre la pestaña TAC; si falla alguna fase, se abre el
 resumen y la pestaña TAC conserva \codigo{status: "skipped"} con la causa exacta.
