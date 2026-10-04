@@ -82,34 +82,22 @@ export function ParseTreePanel({ result }: ParseTreePanelProps) {
 }
 
 function TreeNodeVisual({ node, depth }: { node: TreeNode; depth: number }) {
-  const [collapsed, setCollapsed] = useState(false);
   const isLeaf = node.children.length === 0;
-  const isRule = !isLeaf && /^[a-z]/.test(node.label);
+  const isRule = /^[a-z]/.test(node.label);
+
+  if (isLeaf) {
+    return <div className="rounded px-1 py-0.5 text-xs text-blue-900 dark:text-blue-300" style={{ marginLeft: depth > 0 ? "1.25rem" : 0 }}>{node.label}</div>;
+  }
 
   return (
-    <div style={{ marginLeft: depth > 0 ? "1.25rem" : 0 }}>
-      <div
-        className={`flex items-center gap-1.5 rounded px-1 py-0.5 text-xs ${
-          isLeaf ? "text-blue-900 dark:text-blue-300" : isRule ? "cursor-pointer text-foreground hover:bg-accent" : "cursor-pointer font-head text-foreground hover:bg-accent"
-        }`}
-        onClick={() => !isLeaf && setCollapsed((value) => !value)}
-        role={isLeaf ? undefined : "button"}
-        tabIndex={isLeaf ? undefined : 0}
-        onKeyDown={(event) => {
-          if (!isLeaf && (event.key === "Enter" || event.key === " ")) setCollapsed((value) => !value);
-        }}
-      >
-        {!isLeaf && <span className="w-2.5 text-center">{collapsed ? "+" : "−"}</span>}
+    <details open style={{ marginLeft: depth > 0 ? "1.25rem" : 0 }}>
+      <summary className={`cursor-pointer rounded px-1 py-0.5 text-xs text-foreground hover:bg-accent focus-visible:outline-2 focus-visible:outline-primary ${isRule ? "" : "font-head"}`}>
         <span>{node.label}</span>
-        {!isLeaf && !collapsed && <span className="text-muted-foreground">{node.children.length}</span>}
-      </div>
-      {!isLeaf && !collapsed && (
-        <div>
-          {node.children.map((child, i) => (
-            <TreeNodeVisual key={i} node={child} depth={depth + 1} />
-          ))}
-        </div>
-      )}
-    </div>
+        <span className="ml-1.5 text-muted-foreground">{node.children.length}</span>
+      </summary>
+      {node.children.map((child, i) => (
+        <TreeNodeVisual key={i} node={child} depth={depth + 1} />
+      ))}
+    </details>
   );
 }

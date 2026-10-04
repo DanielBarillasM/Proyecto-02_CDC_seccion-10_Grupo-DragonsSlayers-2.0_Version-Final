@@ -1,5 +1,4 @@
-import { Braces, ChevronDown, ChevronRight } from "lucide-react";
-import { useState } from "react";
+import { Braces } from "lucide-react";
 import type { AnalyzeResult } from "../../lib/types";
 import type { SemanticTreeNode } from "../../semantic/ast";
 import { EmptyPanel } from "./EmptyPanel";
@@ -27,44 +26,34 @@ export function SemanticTreePanel({ result }: SemanticTreePanelProps) {
 }
 
 function SemanticNode({ node, depth }: { node: SemanticTreeNode; depth: number }) {
-  const [collapsed, setCollapsed] = useState(depth > 3);
   const hasChildren = node.children.length > 0;
+  const Container = hasChildren ? "details" : "div";
+  const Heading = hasChildren ? "summary" : "div";
 
   return (
-    <div style={{ marginLeft: depth === 0 ? 0 : "1rem" }}>
-      <button
-        type="button"
-        className={`flex w-full flex-wrap items-center gap-1.5 rounded border-2 px-2 py-1 text-left text-xs ${
+    <Container open={hasChildren ? depth <= 3 : undefined} style={{ marginLeft: depth === 0 ? 0 : "1rem" }}>
+      <Heading
+        className={`rounded border-2 px-2 py-1 text-left text-xs focus-visible:outline-2 focus-visible:outline-primary ${hasChildren ? "cursor-pointer" : ""} ${
           node.diagnostics.length > 0 ? "border-red-900 bg-red-200 text-red-900" : "border-transparent hover:border-border hover:bg-accent"
         }`}
-        onClick={() => hasChildren && setCollapsed((value) => !value)}
       >
-        {hasChildren ? (
-          collapsed ? <ChevronRight size={13} /> : <ChevronDown size={13} />
-        ) : (
-          <span className="inline-block size-1.5 rounded-full bg-border" />
-        )}
         <span className="rounded border-2 bg-muted px-1.5 py-0.5">{node.kind}</span>
-        <strong className="font-head">{node.label}</strong>
-        {node.inferredType && <code className="rounded border-2 bg-card px-1">{node.inferredType}</code>}
+        <strong className="ml-1.5 font-head">{node.label}</strong>
+        {node.inferredType && <code className="ml-1.5 rounded border-2 bg-card px-1">{node.inferredType}</code>}
         {node.location && (
-          <span className="text-muted-foreground">
+          <span className="ml-1.5 text-muted-foreground">
             L{node.location.line}:C{node.location.column}
           </span>
         )}
         {node.diagnostics.map((code) => (
-          <span key={`${node.id}-${code}`} className="rounded border-2 border-red-900 bg-red-300 px-1 text-red-900">
+          <span key={`${node.id}-${code}`} className="ml-1.5 rounded border-2 border-red-900 bg-red-300 px-1 text-red-900">
             {code}
           </span>
         ))}
-      </button>
-      {!collapsed && hasChildren && (
-        <div>
-          {node.children.map((child) => (
-            <SemanticNode key={child.id} node={child} depth={depth + 1} />
-          ))}
-        </div>
-      )}
-    </div>
+      </Heading>
+      {node.children.map((child) => (
+        <SemanticNode key={child.id} node={child} depth={depth + 1} />
+      ))}
+    </Container>
   );
 }
