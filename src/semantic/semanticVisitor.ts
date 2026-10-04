@@ -343,8 +343,8 @@ class SemanticAnalyzer extends AbstractParseTreeVisitor<SemanticTreeNode> implem
     return createSemanticNode("block", "bloque", { location: locOf(ctx), children });
   }
 
-  private analyzeVariableDeclaration(ctx: VariableDeclarationContext): SemanticTreeNode {
-    const name = ctx.Identifier().text;
+  private analyzeVariableDeclaration(ctx: VariableDeclarationContext | ForInitializerContext, isForInitializer = false): SemanticTreeNode {
+    const name = ctx.Identifier()!.text;
     const declaration = locOf(ctx);
     const typeAnnotation = ctx.typeAnnotation();
     const declaredType = typeAnnotation ? this.resolveSemanticType(typeAnnotation.type()) : undefined;
@@ -383,9 +383,15 @@ class SemanticAnalyzer extends AbstractParseTreeVisitor<SemanticTreeNode> implem
     if (!result.ok) {
       this.report("SEM002", "error", declaration, `'${name}' ya fue declarado en este ámbito.`, {
         symbol: name,
-        related: [{ message: "Declaración original.", line: result.existing.declaration.line, column: result.existing.declaration.column }]
+        ...(!isForInitializer ? {
+          related: [{ message: "Declaración original.", line: result.existing.declaration.line, column: result.existing.declaration.column }]
+        } : {})
       });
       diagnosticsForNode.push("SEM002");
+    }
+
+    if (isForInitializer) {
+      return createSemanticNode("for-init", `let ${name}`, { location: declaration, children: initNode ? [initNode] : [] });
     }
 
     return createSemanticNode("variable-declaration", `let ${name}: ${displayType(finalType)}`, {
@@ -743,42 +749,7 @@ class SemanticAnalyzer extends AbstractParseTreeVisitor<SemanticTreeNode> implem
   }
 
   private analyzeForInitializer(ctx: ForInitializerContext): SemanticTreeNode {
-    const identifier = ctx.Identifier();
-    if (identifier) {
-      const name = identifier.text;
-      const declaration = locOf(ctx);
-      const typeAnnotation = ctx.typeAnnotation();
-      const declaredType = typeAnnotation ? this.resolveSemanticType(typeAnnotation.type()) : undefined;
-      let initType: SemanticType | undefined;
-      let initNode: SemanticTreeNode | undefined;
-      if (ctx.initializer()) {
-        const result = this.evaluateExpression(ctx.initializer()!.expression());
-        initType = result.type;
-        initNode = result.node;
-      }
-      const finalType = declaredType ?? initType ?? T.unknown;
-      if (declaredType && initType && !isAssignable(declaredType, initType, (c, p) => this.isSubclass(c, p))) {
-        this.report(
-          "SEM003",
-          "error",
-          declaration,
-          `No se puede inicializar '${name}' de tipo '${displayType(declaredType)}' con un valor de tipo '${displayType(initType)}'.`,
-          { symbol: name }
-        );
-      }
-      const result = this.scopes.declare({
-        name,
-        kind: "variable",
-        type: finalType,
-        mutable: true,
-        initialized: Boolean(ctx.initializer()),
-        declaration
-      });
-      if (!result.ok) {
-        this.report("SEM002", "error", declaration, `'${name}' ya fue declarado en este ámbito.`, { symbol: name });
-      }
-      return createSemanticNode("for-init", `let ${name}`, { location: declaration, children: initNode ? [initNode] : [] });
-    }
+    if (ctx.Identifier()) return this.analyzeVariableDeclaration(ctx, true);
     const expr = ctx.expression();
     if (expr) return this.evaluateExpression(expr).node;
     return createSemanticNode("for-init", "(vacío)", { location: locOf(ctx) });

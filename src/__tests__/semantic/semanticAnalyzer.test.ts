@@ -261,6 +261,22 @@ describe("Análisis semántico — regresiones del Proyecto 1", () => {
     expect(codesOf(`for (let i: integer = "cero"; i < 3; i = i + 1) { print(i); }`)).toContain("SEM003");
   });
 
+  it.each([
+    ["let i = 1", "integer", true],
+    ["let i: integer", "integer", false],
+    ['let i: integer = "cero"', "integer", true]
+  ])("conserva tipos, inicialización y nodos de for para %s", (declaration, type, initialized) => {
+    const result = analyze(`for (${declaration}; true; ) { break; }`);
+    const symbol = result.semantic.symbols.find((item) => item.name === "i");
+    expect(symbol?.type).toEqual({ kind: "primitive", name: type });
+    expect(symbol?.initialized).toBe(initialized);
+    const node = result.semantic.semanticTree[0].children[0];
+    expect(node.kind).toBe("for-init");
+    expect(node.label).toBe("let i");
+    expect(node.symbolId).toBeUndefined();
+    expect(node.diagnostics).toEqual([]);
+  });
+
   it("valida como booleana una única expresión ubicada como condición del for", () => {
     expect(codesOf(`for (; 1; ) { print(1); }`)).toContain("SEM005");
   });
