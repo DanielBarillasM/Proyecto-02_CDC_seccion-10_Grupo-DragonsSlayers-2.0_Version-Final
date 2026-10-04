@@ -113,21 +113,6 @@ function MenubarSeparator({
   )
 }
 
-function MenubarLabel({
-  className,
-  inset,
-  ...props
-}: React.ComponentProps<typeof MenubarPrimitive.Label> & { inset?: boolean }) {
-  return (
-    <MenubarPrimitive.Label
-      data-slot="menubar-label"
-      data-inset={inset}
-      className={cn("px-2 py-1.5 text-xs font-head text-muted-foreground data-[inset]:pl-8", className)}
-      {...props}
-    />
-  )
-}
-
 function MenubarShortcut({ className, ...props }: React.ComponentProps<"span">) {
   return (
     <span
@@ -146,6 +131,5 @@ export {
   MenubarItem,
   MenubarCheckboxItem,
   MenubarSeparator,
-  MenubarLabel,
   MenubarShortcut,
 }

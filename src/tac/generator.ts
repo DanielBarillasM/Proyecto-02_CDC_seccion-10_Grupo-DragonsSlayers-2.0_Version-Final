@@ -106,7 +106,6 @@ class TacGenerator {
   private readonly continueTargets: string[] = [];
   private currentScopeId: string;
   private currentFrameId: string;
-  private currentClassName: string | null = null;
   private nextInstruction = 0;
 
   constructor(
@@ -567,8 +566,6 @@ class TacGenerator {
   private classDeclaration(ctx: ClassDeclarationContext): void {
     const name = ctx.Identifier(0).text;
     this.withScope("class", name, ctx, () => {
-      const previousClass = this.currentClassName;
-      this.currentClassName = name;
       const initializeFields = () => {
         for (const member of ctx.classMember()) {
           const variable = member.variableDeclaration();
@@ -587,7 +584,6 @@ class TacGenerator {
         const fn = member.functionDeclaration();
         if (fn) this.functionDeclaration(fn, fn.Identifier().text === "constructor" ? initializeFields : undefined);
       }
-      this.currentClassName = previousClass;
     });
   }
 

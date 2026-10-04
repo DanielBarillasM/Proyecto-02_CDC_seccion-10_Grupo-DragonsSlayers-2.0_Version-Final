@@ -8,8 +8,6 @@ import type { ScopeInfo } from "../semantic/scopes";
 import type { SemanticTreeNode } from "../semantic/ast";
 import type { TacGenerationResult } from "../tac/types";
 
-export type ProjectView = "semantic" | "docs";
-
 export type AnalysisMode = "valid" | "lexical" | "syntax" | "semantic-error" | "tac" | "custom";
 
 export type AnalyzerMode = "lexer" | "parser" | "semantic" | "tac";
@@ -113,28 +111,4 @@ export interface AnalyzeResult {
     symbolCount: number;
     scopeCount: number;
   };
-}
-
-// ──── Gramática ──────────────────────────────────────────────
-
-export interface GrammarInfo {
-  filename: string;
-  source: string;
-  description: string;
-}
-
-// ──── Descarga ───────────────────────────────────────────────
-
-export interface DownloadPayload {
-  filename: string;
-  content: string;
-  mimeType: string;
-}
-
-// ──── CLI ────────────────────────────────────────────────────
-
-export interface CliResult {
-  filePath: string;
-  result: AnalyzeResult;
-  exitCode: number;
 }

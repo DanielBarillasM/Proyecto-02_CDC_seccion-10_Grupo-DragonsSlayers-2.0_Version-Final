@@ -76,14 +76,6 @@ export class TemporaryAllocator {
   get activeCount(): number {
     return [...this.pools.values()].reduce((total, pool) => total + pool.live.size, 0);
   }
-
-  reset(): void {
-    this.pools.clear();
-    this.currentFrameId = "frame-global";
-    this.created = 0;
-    this.reused = 0;
-    this.peak = 0;
-  }
 }
 
 export class LabelFactory {

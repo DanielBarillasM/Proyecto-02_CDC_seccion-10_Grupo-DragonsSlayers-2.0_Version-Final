@@ -147,7 +147,6 @@ export function runSemanticAnalysis(program: ProgramContext): SemanticAnalysisOu
 
 class SemanticAnalyzer extends AbstractParseTreeVisitor<SemanticTreeNode> implements CompiscriptVisitor<SemanticTreeNode> {
   private functionStack: FunctionContext[] = [];
-  private classStack: ClassInfo[] = [];
   /** Pila de ámbitos de función activos al momento de cada declaración de
    * variable, usada para detectar cuándo una función anidada "captura"
    * una variable de un ámbito de función externo (closures). */
@@ -569,7 +568,6 @@ class SemanticAnalyzer extends AbstractParseTreeVisitor<SemanticTreeNode> implem
     }
 
     const classScope = this.scopes.enterScope("class", name, declaration);
-    this.classStack.push(info);
     this.declareClassMembers(info);
 
     const memberNodes = new Map<ParserRuleContext, SemanticTreeNode>();
@@ -594,7 +592,6 @@ class SemanticAnalyzer extends AbstractParseTreeVisitor<SemanticTreeNode> implem
     }
     const children = ctx.classMember().map((member) => memberNodes.get(member)!).filter(Boolean);
 
-    this.classStack.pop();
     this.scopes.exitScope(declaration);
 
     return createSemanticNode("class-declaration", `class ${name}${info.parentName ? `: ${info.parentName}` : ""}`, {
