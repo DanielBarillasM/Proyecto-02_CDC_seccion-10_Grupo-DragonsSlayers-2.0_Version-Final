@@ -1,22 +1,9 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
+import { styleText } from "node:util";
 import { ANALYZER_ENGINE, analyzeInput } from "../lib/analyze";
 import { displayType } from "../semantic/semanticTypes";
 import type { AnalyzerMode } from "../lib/types";
-
-const colors = {
-  reset: "\x1b[0m",
-  bold: "\x1b[1m",
-  red: "\x1b[31m",
-  green: "\x1b[32m",
-  yellow: "\x1b[33m",
-  cyan: "\x1b[36m",
-  purple: "\x1b[35m"
-};
-
-function color(value: string, text: string): string {
-  return `${value}${text}${colors.reset}`;
-}
 
 function parseArguments(args: string[]): { file?: string; mode: AnalyzerMode } {
   let file: string | undefined;
@@ -70,21 +57,21 @@ async function main(): Promise<void> {
   const input = fs.readFileSync(filePath, "utf8");
   const result = analyzeInput(input, parsed.mode);
 
-  console.log(color(colors.cyan, "\nCOMPISCRIPT SEMANTIC & TAC IDE: PIPELINE DE COMPILACIÓN"));
+  console.log(styleText("cyan", "\nCOMPISCRIPT SEMANTIC & TAC IDE: PIPELINE DE COMPILACIÓN"));
   console.log(`Archivo: ${filePath}`);
   console.log(`Modo: ${parsed.mode}`);
   console.log(`Motor: ${ANALYZER_ENGINE}`);
   console.log(`Tokens reconocidos: ${result.summary.tokenCount}\n`);
 
   if (result.lexicalErrors.length > 0) {
-    console.log(color(colors.red, `${colors.bold}Errores léxicos:`));
+    console.log(styleText(["red", "bold"], "Errores léxicos:"));
     for (const error of result.lexicalErrors) {
       console.log(`  Línea ${error.line}, columna ${error.column}: ${error.offendingSymbol ?? "<EOF>"}: ${error.message}`);
     }
   }
 
   if (result.syntaxErrors.length > 0) {
-    console.log(color(colors.yellow, `${colors.bold}Errores sintácticos:`));
+    console.log(styleText(["yellow", "bold"], "Errores sintácticos:"));
     for (const error of result.syntaxErrors) {
       console.log(`  Línea ${error.line}, columna ${error.column}: ${error.offendingSymbol ?? "<EOF>"}: ${error.message}`);
     }
@@ -92,21 +79,21 @@ async function main(): Promise<void> {
 
   if (parsed.mode === "semantic" || parsed.mode === "tac") {
     if (result.semantic.status === "skipped") {
-      console.log(color(colors.yellow, `\nSemántica omitida: ${result.semantic.skipReason ?? "errores previos"}`));
+      console.log(styleText("yellow", `\nSemántica omitida: ${result.semantic.skipReason ?? "errores previos"}`));
     } else if (result.semantic.status === "completed") {
-      console.log(color(colors.purple, `\n${colors.bold}Diagnósticos semánticos:`));
+      console.log(styleText(["magenta", "bold"], "\nDiagnósticos semánticos:"));
       if (result.semantic.diagnostics.length === 0) {
         console.log("  Sin diagnósticos.");
       } else {
         for (const diagnostic of result.semantic.diagnostics) {
-          const severityColor = diagnostic.severity === "error" ? colors.red : colors.yellow;
-          console.log(color(severityColor, `  [${diagnostic.code}] L${diagnostic.line}:C${diagnostic.column}: ${diagnostic.message}`));
+          const severityColor = diagnostic.severity === "error" ? "red" : "yellow";
+          console.log(styleText(severityColor, `  [${diagnostic.code}] L${diagnostic.line}:C${diagnostic.column}: ${diagnostic.message}`));
         }
       }
 
       console.log(`\nSímbolos: ${result.semantic.metrics.symbolCount} | Ámbitos: ${result.semantic.metrics.scopeCount} | Referencias: ${result.semantic.metrics.referenceCount} | Capturas: ${result.semantic.metrics.capturedVariableCount}`);
       if (result.semantic.symbols.length > 0) {
-        console.log(color(colors.cyan, "Tabla de símbolos (resumen):"));
+        console.log(styleText("cyan", "Tabla de símbolos (resumen):"));
         for (const symbol of result.semantic.symbols) {
           console.log(`  ${symbol.name.padEnd(18)} ${symbol.kind.padEnd(10)} ${displayType(symbol.type).padEnd(18)} scope=${symbol.scopeId}`);
         }
@@ -116,13 +103,13 @@ async function main(): Promise<void> {
 
   if (parsed.mode === "tac") {
     if (result.tac.status === "completed") {
-      console.log(color(colors.cyan, `\n${colors.bold}Código intermedio TAC:`));
+      console.log(styleText(["cyan", "bold"], "\nCódigo intermedio TAC:"));
       console.log(result.tac.formattedCode);
       console.log(
         `\nInstrucciones: ${result.tac.metrics.instructionCount} | Bloques: ${result.tac.basicBlocks.length} | Aristas: ${result.tac.controlFlowEdges.length} | Temporales: ${result.tac.metrics.temporaryCount} | Reutilizados: ${result.tac.metrics.temporariesReuseCount} | Etiquetas: ${result.tac.metrics.labelCount} | Frames: ${result.tac.metrics.activationRecordCount}`
       );
     } else {
-      console.log(color(colors.yellow, `\nTAC ${result.tac.status}: ${result.tac.skipReason ?? "sin resultado"}`));
+      console.log(styleText("yellow", `\nTAC ${result.tac.status}: ${result.tac.skipReason ?? "sin resultado"}`));
     }
   }
 
@@ -134,9 +121,9 @@ async function main(): Promise<void> {
       : parsed.mode === "parser"
         ? "Archivo aceptado: no se encontraron errores léxicos ni sintácticos."
         : "Archivo aceptado léxicamente.";
-    console.log(color(colors.green, `\n${label}`));
+    console.log(styleText("green", `\n${label}`));
   } else {
-    console.log(color(colors.red, `\nAnálisis finalizado con ${result.summary.totalErrorCount} error(es).`));
+    console.log(styleText("red", `\nAnálisis finalizado con ${result.summary.totalErrorCount} error(es).`));
   }
 
   process.exit(result.accepted ? 0 : 1);
