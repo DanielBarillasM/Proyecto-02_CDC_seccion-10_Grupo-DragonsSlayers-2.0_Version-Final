@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { BookOpen, ChevronDown, ChevronRight, FolderClosed } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { ExamplesExplorer } from "./ExamplesExplorer";
 import { CompilerGuide } from "./CompilerGuide";
 import type { AnalysisMode } from "../../lib/types";
@@ -38,7 +37,7 @@ export function ActivitySidebar({ mode, onModeChange }: ActivitySidebarProps) {
         </button>
       </div>
 
-      <ScrollArea className="flex-1">
+      <div role="region" aria-label="Ejemplos y ruta de análisis" tabIndex={0} className="min-h-0 flex-1 overflow-auto outline-none focus-visible:outline-2 focus-visible:outline-primary">
         <div className="flex flex-col gap-1 p-2">
           <Collapsible open={examplesOpen} onOpenChange={setExamplesOpen}>
             <CollapsibleTrigger className="flex w-full items-center gap-2 rounded px-2 py-1.5 text-left font-head text-xs uppercase tracking-wide hover:bg-accent">
@@ -60,7 +59,7 @@ export function ActivitySidebar({ mode, onModeChange }: ActivitySidebarProps) {
             </CollapsibleContent>
           </Collapsible>
         </div>
-      </ScrollArea>
+      </div>
     </div>
   );
 }

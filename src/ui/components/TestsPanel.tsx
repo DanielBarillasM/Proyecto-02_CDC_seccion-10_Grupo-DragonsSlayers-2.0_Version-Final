@@ -3,7 +3,6 @@ import { CheckCircle2, ChevronDown, ChevronRight, FlaskConical, Play, Plus, Rota
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import {
   defaultTestCases,
@@ -297,28 +296,18 @@ function TestCaseForm({ onCancel, onSubmit }: { onCancel: () => void; onSubmit: 
       <Input placeholder="Nombre" value={name} onChange={(event) => setName(event.target.value)} />
 
       <div className="flex flex-wrap gap-2">
-        <Select value={phase} onValueChange={(value) => setPhase(value as TestPhase)}>
-          <SelectTrigger size="sm" className="w-40">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            {PHASE_ORDER.map((value) => (
-              <SelectItem key={value} value={value}>
-                {PHASE_LABELS[value]}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <select className="native-select w-40" aria-label="Fase de la prueba" value={phase} onChange={(event) => setPhase(event.target.value as TestPhase)}>
+          {PHASE_ORDER.map((value) => (
+            <option key={value} value={value}>
+              {PHASE_LABELS[value]}
+            </option>
+          ))}
+        </select>
 
-        <Select value={accepted} onValueChange={(value) => setAccepted(value as "true" | "false")}>
-          <SelectTrigger size="sm" className="w-40">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="true">Debe ser aceptado</SelectItem>
-            <SelectItem value="false">Debe ser rechazado</SelectItem>
-          </SelectContent>
-        </Select>
+        <select className="native-select w-40" aria-label="Resultado esperado" value={accepted} onChange={(event) => setAccepted(event.target.value as "true" | "false")}>
+          <option value="true">Debe ser aceptado</option>
+          <option value="false">Debe ser rechazado</option>
+        </select>
       </div>
 
       <textarea

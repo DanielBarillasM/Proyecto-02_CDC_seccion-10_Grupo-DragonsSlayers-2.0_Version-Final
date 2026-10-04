@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Braces, Database, Download, FlaskConical, FolderTree, ListChecks, Network, Search, Split, Workflow } from "lucide-react";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { downloadText, tacReportToText, tacToCsv } from "../../lib/downloads";
@@ -223,72 +222,54 @@ export function RightDock({ result, inputText, activeTab, onTabChange, onSelectS
         </TabsTrigger>
       </TabsList>
 
-      <TabsContent value="resultado" className="flex-1 overflow-hidden">
-        <ScrollArea className="h-full">
-          <ResultOverviewPanel result={result} />
-        </ScrollArea>
+      <TabsContent value="resultado" className="min-h-0 flex-1 overflow-auto focus-visible:outline-2 focus-visible:outline-primary">
+        <ResultOverviewPanel result={result} />
       </TabsContent>
 
-      <TabsContent value="simbolos" className="flex-1 overflow-hidden">
-        <ScrollArea className="h-full">
-          {result ? <SymbolTablePanel result={result} /> : <EmptyPanel icon={<Database size={22} />} text="Ejecuta el análisis para ver los símbolos." />}
-        </ScrollArea>
+      <TabsContent value="simbolos" className="min-h-0 flex-1 overflow-auto focus-visible:outline-2 focus-visible:outline-primary">
+        {result ? <SymbolTablePanel result={result} /> : <EmptyPanel icon={<Database size={22} />} text="Ejecuta el análisis para ver los símbolos." />}
       </TabsContent>
 
-      <TabsContent value="ambitos" className="flex-1 overflow-hidden">
-        <ScrollArea className="h-full">
-          {result ? (
-            <ScopeTreePanel result={result} onSelectScope={onSelectScope} />
-          ) : (
-            <EmptyPanel icon={<FolderTree size={22} />} text="Ejecuta el análisis para ver los ámbitos." />
-          )}
-        </ScrollArea>
+      <TabsContent value="ambitos" className="min-h-0 flex-1 overflow-auto focus-visible:outline-2 focus-visible:outline-primary">
+        {result ? (
+          <ScopeTreePanel result={result} onSelectScope={onSelectScope} />
+        ) : (
+          <EmptyPanel icon={<FolderTree size={22} />} text="Ejecuta el análisis para ver los ámbitos." />
+        )}
       </TabsContent>
 
-      <TabsContent value="arboles" className="flex-1 overflow-hidden">
-        <ScrollArea className="h-full">
-          {result ? (
-            <div className="flex flex-col gap-2">
-              <p className="px-3 pt-3 text-xs font-head uppercase tracking-wide text-muted-foreground">Árbol semántico anotado</p>
-              <SemanticTreePanel result={result} />
-              <Separator />
-              <p className="px-3 text-xs font-head uppercase tracking-wide text-muted-foreground">Árbol de parseo ANTLR</p>
-              <ParseTreePanel result={result} />
-            </div>
-          ) : (
-            <EmptyPanel icon={<Network size={22} />} text="Ejecuta el análisis para ver los árboles." />
-          )}
-        </ScrollArea>
+      <TabsContent value="arboles" className="min-h-0 flex-1 overflow-auto focus-visible:outline-2 focus-visible:outline-primary">
+        {result ? (
+          <div className="flex flex-col gap-2">
+            <p className="px-3 pt-3 text-xs font-head uppercase tracking-wide text-muted-foreground">Árbol semántico anotado</p>
+            <SemanticTreePanel result={result} />
+            <Separator />
+            <p className="px-3 text-xs font-head uppercase tracking-wide text-muted-foreground">Árbol de parseo ANTLR</p>
+            <ParseTreePanel result={result} />
+          </div>
+        ) : (
+          <EmptyPanel icon={<Network size={22} />} text="Ejecuta el análisis para ver los árboles." />
+        )}
       </TabsContent>
 
-      <TabsContent value="tac" className="flex-1 overflow-hidden">
-        <ScrollArea className="h-full">
-          {result ? <TacInspector result={result} /> : <EmptyPanel icon={<Split size={22} />} text="Ejecuta el análisis para generar TAC." />}
-        </ScrollArea>
+      <TabsContent value="tac" className="min-h-0 flex-1 overflow-auto focus-visible:outline-2 focus-visible:outline-primary">
+        {result ? <TacInspector result={result} /> : <EmptyPanel icon={<Split size={22} />} text="Ejecuta el análisis para generar TAC." />}
       </TabsContent>
 
-      <TabsContent value="visual" className="flex-1 overflow-hidden">
-        <ScrollArea className="h-full">
-          {result ? <TacVisualPanel result={result} /> : <EmptyPanel icon={<Workflow size={22} />} text="Ejecuta el análisis para visualizar el flujo TAC." />}
-        </ScrollArea>
+      <TabsContent value="visual" className="min-h-0 flex-1 overflow-auto focus-visible:outline-2 focus-visible:outline-primary">
+        {result ? <TacVisualPanel result={result} /> : <EmptyPanel icon={<Workflow size={22} />} text="Ejecuta el análisis para visualizar el flujo TAC." />}
       </TabsContent>
 
-      <TabsContent value="documentacion" className="flex-1 overflow-hidden">
-        <ScrollArea className="h-full">
-          <DocumentationPanel />
-        </ScrollArea>
+      <TabsContent value="documentacion" className="min-h-0 flex-1 overflow-auto focus-visible:outline-2 focus-visible:outline-primary">
+        <DocumentationPanel />
       </TabsContent>
 
-      <TabsContent value="exportar" className="flex-1 overflow-hidden">
-        <ScrollArea className="h-full">
-          <ExportsPanel result={result} inputText={inputText} />
-        </ScrollArea>
+      <TabsContent value="exportar" className="min-h-0 flex-1 overflow-auto focus-visible:outline-2 focus-visible:outline-primary">
+        <ExportsPanel result={result} inputText={inputText} />
       </TabsContent>
 
-      <TabsContent value="pruebas" className="flex-1 overflow-hidden">
-        <ScrollArea className="h-full">
-          <TestsPanel onLoadSource={onLoadTestSource} />
-        </ScrollArea>
+      <TabsContent value="pruebas" className="min-h-0 flex-1 overflow-auto focus-visible:outline-2 focus-visible:outline-primary">
+        <TestsPanel onLoadSource={onLoadTestSource} />
       </TabsContent>
     </Tabs>
   );

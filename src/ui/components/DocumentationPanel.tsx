@@ -1,15 +1,12 @@
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { SEMANTIC_CODE_CATALOG } from "../../semantic/diagnostics";
 
-const SECTIONS = ["flujo", "arquitectura", "tac", "tabla", "catalogo", "cobertura", "comandos", "decisiones"];
-
 export function DocumentationPanel() {
   return (
-    <Accordion type="multiple" defaultValue={SECTIONS} className="p-3">
-      <AccordionItem value="flujo">
-        <AccordionTrigger>Flujo de ejecución</AccordionTrigger>
-        <AccordionContent>
+    <div className="p-3 [&>details]:border-b-2 [&>details:last-child]:border-b-0 [&_summary]:cursor-pointer [&_summary]:py-3 [&_summary]:font-head [&_summary]:text-sm [&_summary]:focus-visible:outline-2 [&_summary]:focus-visible:outline-primary">
+      <details open>
+        <summary>Flujo de ejecución</summary>
+        <div className="pb-3">
           <ol className="list-decimal space-y-1 pl-5 text-sm">
             <li>
               Abre <strong>Compiscript Semantic &amp; TAC IDE</strong> y selecciona un caso o carga un archivo <code>.cps</code>.
@@ -22,48 +19,48 @@ export function DocumentationPanel() {
             <li>Si las tres fases anteriores son válidas, el generador emite TAC determinista.</li>
             <li>La aplicación muestra diagnósticos, símbolos, ámbitos, TAC, bloques básicos, aristas del CFG y frames.</li>
           </ol>
-        </AccordionContent>
-      </AccordionItem>
+        </div>
+      </details>
 
-      <AccordionItem value="tac">
-        <AccordionTrigger>Generación de código intermedio</AccordionTrigger>
-        <AccordionContent>
+      <details open>
+        <summary>Generación de código intermedio</summary>
+        <div className="pb-3">
           <p className="text-sm">
             <code>generator.ts</code> recorre los contextos tipados de ANTLR y descompone expresiones en
             instrucciones de tres direcciones. Conserva cortocircuito, temporales reutilizables, etiquetas,
             llamadas, arreglos, objetos, clases, closures y flujo de control. Amplía la tabla de símbolos con
             almacenamiento abstracto y asigna un registro de activación a cada función o método.
           </p>
-        </AccordionContent>
-      </AccordionItem>
+        </div>
+      </details>
 
-      <AccordionItem value="arquitectura">
-        <AccordionTrigger>Arquitectura de la fase semántica</AccordionTrigger>
-        <AccordionContent>
+      <details open>
+        <summary>Arquitectura de la fase semántica</summary>
+        <div className="pb-3">
           <p className="text-sm">
             <code>declarationVisitor.ts</code> realiza la recolección inicial de clases, herencia, campos y firmas de
             métodos. <code>semanticVisitor.ts</code> recorre el CST válido, consulta <code>ScopeManager</code>, aplica{" "}
             <code>typeSystem.ts</code>. Produce diagnósticos estables y construye el árbol semántico anotado.{" "}
             <code>flowAnalysis.ts</code> detecta retornos faltantes y código inalcanzable.
           </p>
-        </AccordionContent>
-      </AccordionItem>
+        </div>
+      </details>
 
-      <AccordionItem value="tabla">
-        <AccordionTrigger>Tabla de símbolos y ámbitos</AccordionTrigger>
-        <AccordionContent>
+      <details open>
+        <summary>Tabla de símbolos y ámbitos</summary>
+        <div className="pb-3">
           <p className="text-sm">
             La tabla registra variables, constantes, parámetros, funciones, clases, campos, métodos y variables de{" "}
             <code>catch</code>. Cada símbolo conserva tipo, mutabilidad, inicialización, ámbito, ubicación de
             declaración, referencias y si fue capturado por un closure. Los ámbitos forman un árbol global con nodos
             de función, clase, bloque, ciclo, switch y catch.
           </p>
-        </AccordionContent>
-      </AccordionItem>
+        </div>
+      </details>
 
-      <AccordionItem value="catalogo">
-        <AccordionTrigger>Catálogo de diagnósticos semánticos</AccordionTrigger>
-        <AccordionContent>
+      <details open>
+        <summary>Catálogo de diagnósticos semánticos</summary>
+        <div className="pb-3">
           <Table>
             <TableHeader>
               <TableRow>
@@ -82,12 +79,12 @@ export function DocumentationPanel() {
               ))}
             </TableBody>
           </Table>
-        </AccordionContent>
-      </AccordionItem>
+        </div>
+      </details>
 
-      <AccordionItem value="cobertura">
-        <AccordionTrigger>Cobertura principal</AccordionTrigger>
-        <AccordionContent>
+      <details open>
+        <summary>Cobertura principal</summary>
+        <div className="pb-3">
           <ul className="list-disc space-y-1 pl-5 text-sm">
             <li>Operadores aritméticos, lógicos, relacionales, igualdad y ternarios.</li>
             <li>Compatibilidad de asignaciones, constantes e inferencia básica de variables/arreglos.</li>
@@ -101,12 +98,12 @@ export function DocumentationPanel() {
               Arreglos homogéneos, acceso por índice y <code>foreach</code>.
             </li>
           </ul>
-        </AccordionContent>
-      </AccordionItem>
+        </div>
+      </details>
 
-      <AccordionItem value="comandos">
-        <AccordionTrigger>Comandos</AccordionTrigger>
-        <AccordionContent>
+      <details open>
+        <summary>Comandos</summary>
+        <div className="pb-3">
           <pre className="overflow-auto rounded border-2 bg-card p-2 text-xs">{`npm ci
 npm run generate
 npm run check
@@ -124,19 +121,19 @@ npm run cli -- examples/tac/13_programa_integral.cps --mode tac
 # Solo fases anteriores
 npm run cli -- examples/compiscript/valid.cps --mode parser
 npm run cli -- examples/compiscript/valid.cps --mode lexer`}</pre>
-        </AccordionContent>
-      </AccordionItem>
+        </div>
+      </details>
 
-      <AccordionItem value="decisiones">
-        <AccordionTrigger>Decisiones de diseño</AccordionTrigger>
-        <AccordionContent>
+      <details open>
+        <summary>Decisiones de diseño</summary>
+        <div className="pb-3">
           <p className="text-sm">
             Consulta <code>docs/DECISIONES_SEMANTICAS.md</code> para las diferencias entre la gramática base y los
             requerimientos semánticos, incluida la incorporación de <code>float</code> y la política de{" "}
             <code>switch</code>.
           </p>
-        </AccordionContent>
-      </AccordionItem>
-    </Accordion>
+        </div>
+      </details>
+    </div>
   );
 }

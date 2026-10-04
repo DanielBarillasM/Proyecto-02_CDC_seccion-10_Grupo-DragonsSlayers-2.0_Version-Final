@@ -1,7 +1,6 @@
 import { Database, Search } from "lucide-react";
 import { useMemo, useState } from "react";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { displayType } from "../../semantic/semanticTypes";
 import type { SymbolKind } from "../../semantic/symbols";
@@ -72,32 +71,22 @@ export function SymbolTablePanel({ result }: SymbolTablePanelProps) {
               className="h-7 w-48 pl-7 text-xs"
             />
           </div>
-          <Select value={kind} onValueChange={(value) => setKind(value as KindFilter)}>
-            <SelectTrigger size="sm" aria-label="Filtrar por clase de símbolo">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Todos los símbolos</SelectItem>
-              {kinds.map((item) => (
-                <SelectItem key={item} value={item}>
-                  {KIND_LABELS[item] ?? item}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Select value={scopeId} onValueChange={setScopeId}>
-            <SelectTrigger size="sm" aria-label="Filtrar por ámbito">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Todos los ámbitos</SelectItem>
-              {scopes.map((scope) => (
-                <SelectItem key={scope.id} value={scope.id}>
-                  {scope.name} · {scope.kind}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <select className="native-select" aria-label="Filtrar por clase de símbolo" value={kind} onChange={(event) => setKind(event.target.value as KindFilter)}>
+            <option value="all">Todos los símbolos</option>
+            {kinds.map((item) => (
+              <option key={item} value={item}>
+                {KIND_LABELS[item] ?? item}
+              </option>
+            ))}
+          </select>
+          <select className="native-select" aria-label="Filtrar por ámbito" value={scopeId} onChange={(event) => setScopeId(event.target.value)}>
+            <option value="all">Todos los ámbitos</option>
+            {scopes.map((scope) => (
+              <option key={scope.id} value={scope.id}>
+                {scope.name} · {scope.kind}
+              </option>
+            ))}
+          </select>
         </div>
       </div>
 

@@ -1,8 +1,7 @@
-import { AlertCircle, AlertOctagon, AlertTriangle, CheckCircle2, CircleAlert, Filter, ListChecks, Search } from "lucide-react";
+import { AlertCircle, AlertOctagon, AlertTriangle, CheckCircle2, CircleAlert, ListChecks, Search } from "lucide-react";
 import { useMemo, useState } from "react";
 import type { ReactNode } from "react";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { SEMANTIC_CODE_CATALOG } from "../../semantic/diagnostics";
 import type { SemanticDiagnostic } from "../../semantic/diagnostics";
 import type { AnalyzeError, AnalyzeResult } from "../../lib/types";
@@ -58,17 +57,11 @@ export function ProblemsPanel({ result, onRevealLine }: ProblemsPanelProps) {
               className="h-7 w-56 pl-7 text-xs"
             />
           </div>
-          <Select value={severity} onValueChange={(value) => setSeverity(value as SeverityFilter)}>
-            <SelectTrigger size="sm" aria-label="Filtrar por severidad">
-              <Filter size={13} />
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Todos</SelectItem>
-              <SelectItem value="error">Errores</SelectItem>
-              <SelectItem value="warning">Warnings</SelectItem>
-            </SelectContent>
-          </Select>
+          <select className="native-select" aria-label="Filtrar por severidad" value={severity} onChange={(event) => setSeverity(event.target.value as SeverityFilter)}>
+            <option value="all">Todos</option>
+            <option value="error">Errores</option>
+            <option value="warning">Warnings</option>
+          </select>
         </div>
       </div>
 

@@ -98,3 +98,9 @@
     @apply bg-background text-foreground font-sans;
   }
 }
+
+@layer components {
+  .native-select {
+    @apply h-7 min-w-0 rounded border-2 bg-input px-2 text-xs shadow-sm outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary;
+  }
+}
