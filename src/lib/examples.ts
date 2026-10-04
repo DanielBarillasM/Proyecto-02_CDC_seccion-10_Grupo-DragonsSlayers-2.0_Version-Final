@@ -4,24 +4,7 @@ import lexicalErrorSource from "../../examples/compiscript/lexical_errors.cps?ra
 import syntaxErrorSource from "../../examples/compiscript/syntax_errors.cps?raw";
 import semanticErrorSource from "../../examples/semantic/semantic_errors.cps?raw";
 
-export interface ExampleCase {
-  title: string;
-  badge: string;
-  description: string;
-  validInput: string;
-  lexicalErrorInput: string;
-  syntaxErrorInput: string;
-  semanticErrorInput: string;
-  lexicalErrorDescription: string;
-  syntaxErrorDescription: string;
-  semanticErrorDescription: string;
-}
-
-export const exampleCase: ExampleCase = {
-  title: "Compiscript",
-  badge: "CPS",
-  description:
-    "Subconjunto de TypeScript con variables, funciones, arreglos, clases y estructuras de control.",
+export const exampleCase = {
   validInput: validSource.trimEnd(),
   lexicalErrorInput: lexicalErrorSource.trimEnd(),
   syntaxErrorInput: syntaxErrorSource.trimEnd(),
