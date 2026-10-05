@@ -1,4 +1,4 @@
-# Decisiones semánticas de Compiscript — Proyecto 1
+# Decisiones semánticas de Compiscript — frontend compartido por los Proyectos 1 y 2
 
 Este documento registra las decisiones tomadas al evolucionar el Laboratorio 1 hacia la fase de análisis semántico. La intención es que cualquier diferencia entre el enunciado, el README del lenguaje y la gramática quede explícita y sea reproducible.
 

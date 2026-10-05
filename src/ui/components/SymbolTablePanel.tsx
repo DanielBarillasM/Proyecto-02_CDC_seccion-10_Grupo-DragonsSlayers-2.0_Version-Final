@@ -64,14 +64,16 @@ export function SymbolTablePanel({ result }: SymbolTablePanelProps) {
           <div className="relative">
             <Search size={13} className="absolute left-2 top-1/2 -translate-y-1/2 opacity-60" />
             <Input
+              name="symbols-query"
+              autoComplete="off"
               value={query}
               onChange={(event) => setQuery(event.target.value)}
-              placeholder="Nombre, tipo o ámbito"
+              placeholder="Nombre, tipo o ámbito…"
               aria-label="Buscar en la tabla de símbolos"
               className="h-7 w-48 pl-7 text-xs"
             />
           </div>
-          <select className="native-select" aria-label="Filtrar por clase de símbolo" value={kind} onChange={(event) => setKind(event.target.value as KindFilter)}>
+          <select className="native-select" aria-label="Filtrar por clase de símbolo" name="symbols-kind" autoComplete="off" value={kind} onChange={(event) => setKind(event.target.value as KindFilter)}>
             <option value="all">Todos los símbolos</option>
             {kinds.map((item) => (
               <option key={item} value={item}>
@@ -79,7 +81,7 @@ export function SymbolTablePanel({ result }: SymbolTablePanelProps) {
               </option>
             ))}
           </select>
-          <select className="native-select" aria-label="Filtrar por ámbito" value={scopeId} onChange={(event) => setScopeId(event.target.value)}>
+          <select className="native-select" aria-label="Filtrar por ámbito" name="symbols-scope" autoComplete="off" value={scopeId} onChange={(event) => setScopeId(event.target.value)}>
             <option value="all">Todos los ámbitos</option>
             {scopes.map((scope) => (
               <option key={scope.id} value={scope.id}>

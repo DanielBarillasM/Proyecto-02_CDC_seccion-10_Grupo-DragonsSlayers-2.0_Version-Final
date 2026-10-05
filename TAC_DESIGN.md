@@ -120,6 +120,8 @@ Cuando una función anidada referencia un símbolo de un frame exterior, el fram
 
 Cada layout conserva campos heredados, offsets, tamaño de instancia y etiquetas de métodos. Los overrides sustituyen la etiqueta heredada sin cambiar los offsets de los campos. `NEW_OBJECT` reserva la instancia de forma abstracta y la llamada al constructor recibe el objeto como primer parámetro.
 
+Toda clase dispone de una etiqueta de constructor propia. Cuando no existe un constructor explícito, el generador emite uno implícito con su `FUNC_BEGIN`/`FUNC_END` y su registro de activación. En una subclase, ese constructor reenvía `this` y los argumentos al constructor padre antes de inicializar los campos propios. Esta regla evita llamadas a etiquetas inexistentes y conserva la inicialización de ambos niveles de la jerarquía.
+
 ## Evidencia
 
-La suite `src/__tests__/tac.test.ts` verifica contenido concreto del TAC, precedencia, ciclos, llamadas, arreglos, ternario, foreach, determinismo, almacenamiento, frames, liberación de temporales y bloqueo por errores. Sus casos de éxito y rechazo usan `analyzeInput(..., "tac")`, la misma llamada usada por la interfaz. Los archivos de `examples/tac` pueden cargarse como `.cps` en el IDE o ejecutarse desde la CLI; una fuente válida genera TAC y una fuente inválida muestra la causa del bloqueo.
+La suite `src/__tests__/tac.test.ts` verifica contenido concreto del TAC, precedencia, ciclos, llamadas, arreglos, ternario, foreach, constructores implícitos/heredados, determinismo, almacenamiento, frames, liberación de temporales y bloqueo por errores. Sus casos de éxito y rechazo usan `analyzeInput(..., "tac")`, la misma llamada usada por la interfaz. Los archivos de `examples/tac` pueden cargarse como `.cps` en el IDE o ejecutarse desde la CLI; una fuente válida genera TAC y una fuente inválida muestra la causa del bloqueo.

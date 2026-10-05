@@ -42,6 +42,8 @@ AnalyzeResult
 
 En modo `tac`, el mismo orquestador ejecuta `generateTac()` solamente después de completar las tres fases anteriores sin errores. El generador recorre los contextos tipados de ANTLR, reutiliza los símbolos y ámbitos semánticos y produce instrucciones, temporales, etiquetas, layouts de clase y registros de activación.
 
+Los layouts asignan a cada clase una etiqueta de constructor propia. Si el programa omite el método, el generador emite un constructor implícito y su frame; para una subclase, este reenvía receptor y parámetros al constructor del padre antes de inicializar los campos propios. Así todas las instrucciones `CALL` de `new` resuelven una definición TAC existente.
+
 ```text
 ANTLR CST válido
   → análisis semántico
@@ -126,7 +128,7 @@ La interfaz no decide si un programa es válido. Su responsabilidad es explicar 
 
 `src/__tests__/semantic/semanticAnalyzer.test.ts` contiene programas de éxito, un caso por diagnóstico y regresiones de flujo, clases, funciones y arreglos. `scopeManager.test.ts` prueba de forma directa inserción, recuperación, actualización y manejo de alcances, que son operaciones explícitas de la rúbrica.
 
-Las suites adicionales verifican el pipeline general, los archivos de ejemplo, los casos de rúbrica y los casos predeterminados que expone `TestsPanel`. `lexer.test.ts` y `parser.test.ts` mantienen testers identificables por fase; `testCases.defaults.test.ts` garantiza que los casos integrados en la interfaz produzcan el resultado esperado; `tac.test.ts` verifica contenido, precedencia, bloques, aristas, frames y bloqueo por errores. La versión actual ejecuta **133 pruebas en 8 archivos**.
+Las suites adicionales verifican el pipeline general, los archivos de ejemplo, los casos de rúbrica, los controles de la interfaz y los casos predeterminados que expone `TestsPanel`. `lexer.test.ts` y `parser.test.ts` mantienen testers identificables por fase; `testCases.defaults.test.ts` garantiza que los casos integrados en la interfaz produzcan el resultado esperado; `tac.test.ts` verifica contenido, precedencia, bloques, aristas, frames, constructores implícitos/heredados y bloqueo por errores. La versión actual ejecuta **167 pruebas en 12 archivos**.
 
 La aplicación se empaqueta con Electron Builder. `exe:portable` genera Windows x64; `exe:mac` produce ZIP y DMG sin firma para Intel y Apple Silicon; `exe:linux` produce AppImage x64. Los targets macOS se construyen en macOS o en un runner macOS; Linux se construye de forma nativa, mediante WSL o Docker para conservar permisos y enlaces simbólicos. El [release V1.2.0](https://github.com/DanielBarillasM/Proyecto-01_CDC_seccion-10_Grupo-DragonsSlayers-2.0/releases/tag/Compiscript-Semantic-IDE-V1.2.0) es únicamente el binario heredado del Proyecto 1; no incluye TAC.
 

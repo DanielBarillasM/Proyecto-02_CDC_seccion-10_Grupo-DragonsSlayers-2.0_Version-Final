@@ -144,4 +144,63 @@ describe("TAC core", () => {
     expect(analyzeInput("let x: integer = 1; @", "tac").tac.status).toBe("skipped");
     expect(analyzeInput("let x: integer = ;", "tac").tac.status).toBe("skipped");
   });
+
+  it("emits an implicit constructor and initializes class fields", () => {
+    const result = analyzeInput(
+      "class A { let x: integer = 1; } let a: A = new A(); print(a.x);",
+      "tac"
+    );
+    const constructorLabel = "fn_A_constructor";
+    const definedFunctions = new Set(
+      result.tac.instructions
+        .filter((instruction) => instruction.op === "FUNC_BEGIN")
+        .map((instruction) => String(instruction.result?.value))
+    );
+    const constructorCall = result.tac.instructions.find(
+      (instruction) => instruction.op === "CALL" && instruction.arg1?.value === constructorLabel
+    );
+    const fieldInitialization = result.tac.instructions.find(
+      (instruction) => instruction.op === "SET_FIELD" && instruction.arg2?.value === "x"
+    );
+
+    expect(result.tac.status).toBe("completed");
+    expect(definedFunctions).toContain(constructorLabel);
+    expect(constructorCall).toBeDefined();
+    expect(fieldInitialization?.arg1?.value).toBe("this");
+    expect(result.tac.activationRecords.some((frame) => frame.name === "A.constructor")).toBe(true);
+  });
+
+  it("chains an inherited constructor and initializes subclass fields", () => {
+    const result = analyzeInput(
+      `
+        class Base {
+          let x: integer = 1;
+          function constructor() {}
+        }
+        class Child: Base {
+          let y: integer = 2;
+        }
+        let child: Child = new Child();
+        print(child.y);
+      `,
+      "tac"
+    );
+    const definedFunctions = new Set(
+      result.tac.instructions
+        .filter((instruction) => instruction.op === "FUNC_BEGIN")
+        .map((instruction) => String(instruction.result?.value))
+    );
+    const calls = result.tac.instructions
+      .filter((instruction) => instruction.op === "CALL")
+      .map((instruction) => String(instruction.arg1?.value));
+    const childFieldInitialization = result.tac.instructions.find(
+      (instruction) => instruction.op === "SET_FIELD" && instruction.arg2?.value === "y"
+    );
+
+    expect(result.tac.status).toBe("completed");
+    expect(definedFunctions).toContain("fn_Base_constructor");
+    expect(definedFunctions).toContain("fn_Child_constructor");
+    expect(calls).toEqual(expect.arrayContaining(["fn_Base_constructor", "fn_Child_constructor"]));
+    expect(childFieldInitialization?.arg1?.value).toBe("this");
+  });
 });

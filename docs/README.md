@@ -24,7 +24,7 @@ Para casos ejecutables y trazables consulte `../examples/semantic/README.md` y `
 
 ## Estado documental verificado
 
-La documentación fue contrastada con la versión 2.0.0 del Proyecto 2 el 28 de septiembre de 2026. La verificación reproducible comprende TypeScript, **133 pruebas en 8 archivos**, build de producción y ejecución del caso integral TAC. La evidencia cubre lexer, parser, semántica, tabla de símbolos, bloques básicos, CFG y generación TAC.
+La documentación fue contrastada con la versión 2.0.0 del Proyecto 2 el 4 de octubre de 2026. La verificación reproducible comprende TypeScript, **167 pruebas en 12 archivos**, build de producción y ejecución del caso integral TAC. La evidencia cubre lexer, parser, semántica, tabla de símbolos, bloques básicos, CFG, constructores implícitos/heredados y generación TAC.
 
 El [release V1.2.0](https://github.com/DanielBarillasM/Proyecto-01_CDC_seccion-10_Grupo-DragonsSlayers-2.0/releases/tag/Compiscript-Semantic-IDE-V1.2.0) pertenece al Proyecto 1 y se conserva únicamente como referencia histórica. La versión 2.0.0 se compila desde este repositorio; el workflow `.github/workflows/release.yml` verifica y empaqueta Windows, macOS y Linux, y publica los artefactos cuando se crea un tag `v*`.
 

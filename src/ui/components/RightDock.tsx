@@ -61,9 +61,9 @@ function TacInspector({ result }: { result: AnalyzeResult }) {
           <div className="flex gap-1.5">
             <label className="flex min-w-0 flex-1 items-center gap-1.5 rounded border bg-background px-2 py-1 focus-within:ring-1 focus-within:ring-ring">
               <Search size={13} className="shrink-0 text-muted-foreground" />
-              <input aria-label="Filtrar TAC" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Buscar operando o etiqueta..." className="min-w-0 flex-1 bg-transparent text-xs outline-none" />
+              <input aria-label="Filtrar TAC" name="tac-query" autoComplete="off" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Buscar operando o etiqueta…" className="min-w-0 flex-1 bg-transparent text-xs outline-none" />
             </label>
-            <select aria-label="Filtrar opcode" value={opcode} onChange={(event) => setOpcode(event.target.value)} className="rounded border bg-background px-2 py-1 text-xs"><option value="all">Todos los opcodes</option>{opcodes.map((item) => <option key={item} value={item}>{item}</option>)}</select>
+            <select aria-label="Filtrar opcode" name="tac-opcode" autoComplete="off" value={opcode} onChange={(event) => setOpcode(event.target.value)} className="rounded border bg-background px-2 py-1 text-xs"><option value="all">Todos los opcodes</option>{opcodes.map((item) => <option key={item} value={item}>{item}</option>)}</select>
           </div>
           <div className="overflow-hidden rounded-md border bg-[#10151a] shadow-inner">
             <div className="flex items-center justify-between border-b border-white/10 px-3 py-2 text-[10px] uppercase tracking-[0.16em] text-muted-foreground">

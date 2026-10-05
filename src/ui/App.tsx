@@ -78,6 +78,16 @@ export function App() {
     return [...lexical, ...syntax, ...semantic];
   }, [result]);
 
+  const analysisAnnouncement = useMemo(() => {
+    if (isRunning) return "Análisis en curso…";
+    if (analyzeError || fileError) return analyzeError ?? fileError ?? "";
+    if (!result) return "";
+    if (result.summary.totalErrorCount > 0) {
+      return `Análisis finalizado con ${result.summary.totalErrorCount} errores.`;
+    }
+    return `Análisis finalizado sin errores. ${result.tac.instructions.length} instrucciones TAC generadas.`;
+  }, [analyzeError, fileError, isRunning, result]);
+
   function handleModeChange(nextMode: AnalysisMode) {
     setMode(nextMode);
     if (nextMode === "custom" && customInput === "") {
@@ -136,6 +146,12 @@ export function App() {
 
   return (
     <div className="flex h-screen flex-col">
+      <a
+        href="#main-content"
+        className="sr-only z-50 bg-background px-3 py-2 font-head focus:not-sr-only focus:fixed focus:left-2 focus:top-2 focus:outline-2 focus:outline-offset-2 focus:outline-primary"
+      >
+        Saltar al contenido principal
+      </a>
       <MenuBar
         onLoadFile={handleLoadFile}
         onFileError={setFileError}
@@ -164,10 +180,11 @@ export function App() {
       />
 
       {(analyzeError || fileError) && (
-        <div className="border-b-2 bg-red-200 px-3 py-1.5 text-xs text-red-900">{analyzeError ?? fileError}</div>
+        <div role="alert" className="border-b-2 bg-red-200 px-3 py-1.5 text-xs text-red-900">{analyzeError ?? fileError}</div>
       )}
 
-      <div className="flex-1 overflow-hidden">
+      <main id="main-content" className="flex-1 overflow-hidden" tabIndex={-1}>
+        <h1 className="sr-only">Compiscript Semantic &amp; TAC IDE</h1>
         <ResizablePanelGroup orientation="horizontal">
           <ResizablePanel defaultSize="18" minSize="12" maxSize="30">
             <ActivitySidebar mode={mode} onModeChange={handleModeChange} />
@@ -210,6 +227,10 @@ export function App() {
             />
           </ResizablePanel>
         </ResizablePanelGroup>
+      </main>
+
+      <div className="sr-only" aria-live="polite" aria-atomic="true">
+        {analysisAnnouncement}
       </div>
 
       <StatusBar isRunning={isRunning} result={result} value={inputValue} cursor={cursor} />

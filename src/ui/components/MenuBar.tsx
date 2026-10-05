@@ -73,7 +73,7 @@ export function MenuBar({
       </div>
       <span className="font-head text-sm">Compiscript Semantic & TAC IDE</span>
 
-      <input ref={fileInputRef} type="file" accept=".cps,text/plain" hidden onChange={handleFile} />
+      <input ref={fileInputRef} type="file" accept=".cps,text/plain" aria-label="Seleccionar archivo Compiscript" hidden onChange={handleFile} />
 
       <Menubar className="h-auto border-0 bg-transparent px-0 shadow-none">
         <MenubarMenu>

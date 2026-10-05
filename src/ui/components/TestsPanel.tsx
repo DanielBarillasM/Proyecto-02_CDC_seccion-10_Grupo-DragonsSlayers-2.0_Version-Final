@@ -201,11 +201,11 @@ function TestCaseRow({
           <span className="pl-[18px] text-xs text-muted-foreground">{testCase.description}</span>
         </button>
         <div className="flex shrink-0 items-center gap-1">
-          <Button size="icon-sm" variant="outline" onClick={onRun} title="Ejecutar">
-            <Play size={13} />
+          <Button size="icon-sm" variant="outline" onClick={onRun} title="Ejecutar" aria-label={`Ejecutar ${testCase.name}`}>
+            <Play size={13} aria-hidden="true" />
           </Button>
-          <Button size="icon-sm" variant="ghost" onClick={onDelete} title="Eliminar">
-            <Trash2 size={13} />
+          <Button size="icon-sm" variant="ghost" onClick={onDelete} title="Eliminar" aria-label={`Eliminar ${testCase.name}`}>
+            <Trash2 size={13} aria-hidden="true" />
           </Button>
         </div>
       </div>
@@ -291,12 +291,19 @@ function TestCaseForm({ onCancel, onSubmit }: { onCancel: () => void; onSubmit: 
   return (
     <div className="flex flex-col gap-2 rounded border-2 border-primary bg-card p-3">
       <h4 className="font-head text-sm">Nueva prueba</h4>
-      {error && <p className="text-xs text-red-700">{error}</p>}
+      {error && <p role="alert" className="text-xs text-red-700">{error}</p>}
 
-      <Input placeholder="Nombre" value={name} onChange={(event) => setName(event.target.value)} />
+      <Input
+        aria-label="Nombre de la prueba"
+        name="test-name"
+        autoComplete="off"
+        placeholder="Ejemplo: constructor implícito…"
+        value={name}
+        onChange={(event) => setName(event.target.value)}
+      />
 
       <div className="flex flex-wrap gap-2">
-        <select className="native-select w-40" aria-label="Fase de la prueba" value={phase} onChange={(event) => setPhase(event.target.value as TestPhase)}>
+        <select className="native-select w-40" aria-label="Fase de la prueba" name="test-phase" autoComplete="off" value={phase} onChange={(event) => setPhase(event.target.value as TestPhase)}>
           {PHASE_ORDER.map((value) => (
             <option key={value} value={value}>
               {PHASE_LABELS[value]}
@@ -304,14 +311,17 @@ function TestCaseForm({ onCancel, onSubmit }: { onCancel: () => void; onSubmit: 
           ))}
         </select>
 
-        <select className="native-select w-40" aria-label="Resultado esperado" value={accepted} onChange={(event) => setAccepted(event.target.value as "true" | "false")}>
+        <select className="native-select w-40" aria-label="Resultado esperado" name="test-accepted" autoComplete="off" value={accepted} onChange={(event) => setAccepted(event.target.value as "true" | "false")}>
           <option value="true">Debe ser aceptado</option>
           <option value="false">Debe ser rechazado</option>
         </select>
       </div>
 
       <textarea
-        placeholder="Código Compiscript (.cps)"
+        aria-label="Código fuente Compiscript"
+        name="test-source"
+        autoComplete="off"
+        placeholder="Escribe código Compiscript (.cps)…"
         value={source}
         onChange={(event) => setSource(event.target.value)}
         rows={6}
@@ -320,14 +330,24 @@ function TestCaseForm({ onCancel, onSubmit }: { onCancel: () => void; onSubmit: 
 
       <div className="flex flex-wrap gap-2">
         <Input
-          placeholder="# errores léxicos esperados (opcional)"
+          aria-label="Cantidad de errores léxicos esperados"
+          name="test-lexical-errors"
+          autoComplete="off"
+          type="number"
+          min="0"
+          placeholder="Ejemplo: 0…"
           value={lexicalErrors}
           onChange={(event) => setLexicalErrors(event.target.value)}
           className="w-56"
           inputMode="numeric"
         />
         <Input
-          placeholder="# errores sintácticos esperados (opcional)"
+          aria-label="Cantidad de errores sintácticos esperados"
+          name="test-syntax-errors"
+          autoComplete="off"
+          type="number"
+          min="0"
+          placeholder="Ejemplo: 0…"
           value={syntaxErrors}
           onChange={(event) => setSyntaxErrors(event.target.value)}
           className="w-56"
@@ -335,7 +355,10 @@ function TestCaseForm({ onCancel, onSubmit }: { onCancel: () => void; onSubmit: 
         />
       </div>
       <Input
-        placeholder="Códigos SEM esperados, separados por coma (opcional)"
+        aria-label="Códigos semánticos esperados"
+        name="test-semantic-codes"
+        autoComplete="off"
+        placeholder="Ejemplo: SEM001, SEM003…"
         value={semanticCodes}
         onChange={(event) => setSemanticCodes(event.target.value)}
       />

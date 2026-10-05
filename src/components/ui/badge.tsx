@@ -18,7 +18,7 @@ const variantClasses = {
 
 function badgeVariants({ variant = "default" }: { variant?: keyof typeof variantClasses } = {}) {
   return cn(
-    "group/badge inline-flex h-5 w-fit shrink-0 items-center justify-center gap-1 overflow-hidden rounded border-2 px-2 py-0.5 text-xs font-head font-medium whitespace-nowrap shadow-sm transition-all focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 aria-invalid:border-destructive [&>svg]:pointer-events-none [&>svg]:size-3!",
+    "group/badge inline-flex h-5 w-fit shrink-0 items-center justify-center gap-1 overflow-hidden rounded border-2 px-2 py-0.5 text-xs font-head font-medium whitespace-nowrap shadow-sm transition-[color,background-color,border-color,box-shadow] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 aria-invalid:border-destructive [&>svg]:pointer-events-none [&>svg]:size-3!",
     variantClasses[variant]
   )
 }

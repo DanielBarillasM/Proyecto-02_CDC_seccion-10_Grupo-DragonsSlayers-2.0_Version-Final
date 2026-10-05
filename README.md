@@ -10,7 +10,7 @@ Un entorno visual para recorrer el frontend de Compiscript y producir código in
 [![Versión](https://img.shields.io/badge/versi%C3%B3n-2.0.0-FFD426?style=for-the-badge&labelColor=111111)](package.json)
 [![ANTLR](https://img.shields.io/badge/ANTLR-4-FFD426?style=for-the-badge&labelColor=111111)](https://www.antlr.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-FFD426?style=for-the-badge&labelColor=111111)](https://www.typescriptlang.org/)
-[![Tests](https://img.shields.io/badge/tests-133%20passing-32D583?style=for-the-badge&labelColor=111111)](#calidad-y-pruebas)
+[![Tests](https://img.shields.io/badge/tests-167%20passing-32D583?style=for-the-badge&labelColor=111111)](#calidad-y-pruebas)
 [![License](https://img.shields.io/badge/license-MIT-FFD426?style=for-the-badge&labelColor=111111)](LICENSE)
 
 <img src="docs/assets/compiscript-project2-pipeline.png" alt="Pipeline de Compiscript: código, lexer, parser, semántica y TAC" width="100%" />
@@ -48,7 +48,7 @@ Código fuente → Lexer → Parser/CST → Semántica → TAC
 | Almacenamiento | Temporales reutilizables, offsets, tamaños, alineación y registros de activación |
 | Clases | Layouts deterministas de campos y resolución de métodos heredados |
 | Visualización | TAC textual, bloques básicos, CFG, tabla de símbolos, ámbitos, árboles y frames |
-| Evidencia | Ejemplos positivos y negativos, exportaciones y 133 pruebas automatizadas |
+| Evidencia | Ejemplos positivos y negativos, exportaciones y 167 pruebas automatizadas |
 
 ## De la semántica al almacenamiento
 
@@ -199,14 +199,14 @@ Estado verificado de la versión 2.0.0:
 
 | Verificación | Resultado |
 | --- | ---: |
-| Archivos de prueba | 8 |
-| Pruebas automatizadas | **133 aprobadas** |
-| Pruebas TAC directas | 15 |
+| Archivos de prueba | 12 |
+| Pruebas automatizadas | **167 aprobadas en 12 archivos** |
+| Pruebas TAC directas | 17 |
 | TypeScript `--noEmit` | Aprobado |
 | Build de producción | Aprobado |
 | Revisión del IDE en navegador | 0 errores de consola |
 
-La suite valida determinismo, precedencia, ciclos, llamadas, arreglos, ternarios, `foreach`, almacenamiento, temporales, frames, recuperación y bloqueo entre fases.
+La suite valida determinismo, precedencia, ciclos, llamadas, arreglos, ternarios, `foreach`, almacenamiento, temporales, frames, constructores implícitos y heredados, recuperación y bloqueo entre fases.
 
 ## Estructura del repositorio
 

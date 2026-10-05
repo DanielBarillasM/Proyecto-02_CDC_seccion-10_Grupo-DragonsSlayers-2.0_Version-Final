@@ -19,6 +19,25 @@ Esta matriz contrasta el enunciado de análisis semántico con la implementació
 | Bloques básicos y CFG | `src/tac/controlFlow.ts`, `TacGenerationResult`, pruebas TAC | Cubierto |
 | Verificación y empaquetado multiplataforma | `.github/workflows/release.yml` | Cubierto; la publicación ocurre con tags `v*` |
 
+## Rúbrica ponderada del Proyecto 2 — 25 puntos
+
+| Criterio evaluado | Puntos | Evidencia principal | Prueba o demostración | Estado |
+| --- | ---: | --- | --- | --- |
+| Diseño de la representación intermedia | 3 | `src/tac/types.ts`, `TAC_DESIGN.md`, opcodes tipados y metadatos de fuente/scope/frame | exportación TAC y caso integral | Cubierto |
+| Declaraciones y asignaciones | 1 | `MOV`, resolución de lvalues y almacenamiento de símbolos | `tac.test.ts`: precedencia y operandos reales | Cubierto |
+| Operaciones aritméticas | 1 | `ADD`, `SUB`, `MUL`, `DIV`, `MOD` | pruebas de precedencia y programa integral | Cubierto |
+| Operaciones lógicas | 1 | `NOT`, cortocircuito mediante saltos y temporales booleanos | programas semánticos y TAC válidos | Cubierto |
+| Arreglos | 1 | `NEW_ARRAY`, `ARRAY_GET`, `ARRAY_SET`, `ARRAY_LENGTH` | prueba de arreglos y `foreach` | Cubierto |
+| Estructuras de control | 3 | etiquetas, saltos, bloques básicos y CFG para `if`, ciclos y `switch` | `tac.test.ts`, `tacVisual.test.tsx` | Cubierto |
+| Funciones y parámetros | 2 | `FUNC_BEGIN`, `PARAM`, `CALL`, `RETURN` y registros de activación | prueba de funciones/llamadas/retornos | Cubierto |
+| Recursión | 2 | etiquetas estables, llamada a la propia función y frame por invocación abstracta | ejemplo integral semántico y suite de funciones | Cubierto |
+| Clases y objetos | 2 | layouts, `NEW_OBJECT`, campos, métodos y constructor explícito o implícito | regresión de constructor implícito con inicialización de campos | Cubierto |
+| Herencia | 2 | layout heredado, resolución de métodos y encadenamiento del constructor padre | regresión de constructor heredado y campo propio de la hija | Cubierto |
+| Manejo de excepciones `try/catch` | 2 | `TRY_BEGIN`, `TRY_END`, `CATCH_BEGIN`, `CATCH_END` | prueba de `switch` y `try/catch` | Cubierto |
+| Creación y reciclaje de temporales | 3 | `TemporaryAllocator`, pools por frame y métricas de reutilización | pruebas del allocator y cero temporales vivos al finalizar | Cubierto |
+| Nuevas funciones de tabla de símbolos | 2 | almacenamiento, offsets, referencias, actualización y scopes | `scopeManager.test.ts` e inspector de símbolos | Cubierto |
+| **Total** | **25** | **Implementación, interfaz y documentación** | **167 pruebas en 12 archivos** | **Cubierto** |
+
 ## Reglas semánticas
 
 | Área | Requisito del enunciado | Implementación | Evidencia automatizada | Estado |

@@ -50,14 +50,16 @@ export function ProblemsPanel({ result, onRevealLine }: ProblemsPanelProps) {
           <div className="relative">
             <Search size={13} className="absolute left-2 top-1/2 -translate-y-1/2 opacity-60" />
             <Input
+              name="problems-query"
+              autoComplete="off"
               value={query}
               onChange={(event) => setQuery(event.target.value)}
-              placeholder="Buscar código, símbolo o mensaje"
+              placeholder="Buscar código, símbolo o mensaje…"
               aria-label="Buscar problemas"
               className="h-7 w-56 pl-7 text-xs"
             />
           </div>
-          <select className="native-select" aria-label="Filtrar por severidad" value={severity} onChange={(event) => setSeverity(event.target.value as SeverityFilter)}>
+          <select className="native-select" aria-label="Filtrar por severidad" name="problems-severity" autoComplete="off" value={severity} onChange={(event) => setSeverity(event.target.value as SeverityFilter)}>
             <option value="all">Todos</option>
             <option value="error">Errores</option>
             <option value="warning">Warnings</option>

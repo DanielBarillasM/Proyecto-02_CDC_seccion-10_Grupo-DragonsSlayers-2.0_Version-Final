@@ -1,6 +1,6 @@
 # Auditoría técnica del frontend heredado y Proyecto 2
 
-**Última verificación:** 30 de septiembre de 2026, sobre la versión 2.0.0 del Proyecto 2 con generación TAC integrada.
+**Última verificación:** 4 de octubre de 2026, sobre la versión 2.0.0 del Proyecto 2 con generación TAC integrada.
 
 ## Resultado ejecutivo
 
@@ -9,7 +9,7 @@ La revisión contrastó el proyecto con el README del lenguaje, la gramática AN
 Estado final verificado:
 
 - `npm run check`: aprobado;
-- Línea base actual: 133 pruebas aprobadas en 8 archivos de prueba, incluida la generación TAC y el CFG;
+- Línea base actual: 167 pruebas aprobadas en 12 archivos de prueba, incluida la generación TAC, el CFG y constructores implícitos/heredados;
 - `npm run build`: aprobado;
 - parser regenerado desde la gramática activa;
 - generador TAC conectado al CST y a la información semántica;
@@ -26,10 +26,10 @@ La verificación final se ejecutó desde una instalación limpia en la carpeta d
 | --- | --- |
 | `npm ci` | 489 paquetes instalados; auditoría de npm sin vulnerabilidades |
 | `npm run check` | TypeScript finalizó sin errores |
-| `npm test` | 8 archivos y 133 pruebas aprobadas con Vitest 5.0.2 |
+| `npm test` | 12 archivos y 167 pruebas aprobadas con Vitest 5.0.2 |
 | `npm run cli:tac` | caso integral aceptado: 53 instrucciones, 14 bloques, 8 aristas y 4 frames |
-| `npm run build` | build de producción aprobado; 3436 módulos transformados |
-| Revisión en navegador | ejemplo TAC integrado aceptado con 66 instrucciones y 20 bloques; carga real de `08_switch_try.cps` aceptada con 25 instrucciones y 9 bloques; carga real de `16_error_semantico.cps` reportó 2 errores y omitió TAC con causa explícita |
+| `npm run build` | build de producción aprobado; el conteo de módulos se considera informativo y puede variar entre revisiones |
+| Revisión en navegador | ejemplo TAC integrado aceptado con 74 instrucciones, 23 bloques y 5 frames —incluido el constructor implícito heredado de `Perro`—; carga real de `08_switch_try.cps` aceptada con 25 instrucciones y 9 bloques; carga real de `16_error_semantico.cps` reportó 2 errores y omitió TAC con causa explícita |
 | Consola del navegador | 0 errores y 0 advertencias |
 | Informe técnico | 81 páginas; 0 desbordamientos, referencias o citas indefinidas |
 | Enlaces y workflow | enlaces Markdown locales existentes y YAML del workflow válido |
@@ -57,6 +57,7 @@ El aviso de Vite sobre el tamaño del chunk principal permanece como recomendaci
 | Crítica | Generación TAC | El generador inicial extraía texto crudo de nodos y producía operandos incorrectos en declaraciones, `print`, ciclos, retornos y expresiones. | Se reemplazó por un recorrido dirigido por sintaxis de los contextos ANTLR, con precedencia, lvalues, control de flujo, llamadas, arreglos, clases y closures. | `generator.ts` y `tac.test.ts`. |
 | Alta | Almacenamiento | Los registros se construían después de emitir instrucciones, por lo que los operandos no incluían frame ni offset. | Los frames y layouts se preparan antes de emitir; símbolos y temporales quedan asociados a almacenamiento abstracto. | Inspector TAC, exportaciones y pruebas de storage. |
 | Alta | Flujo TAC | Los bloques se reconstruían dentro de React y `RETURN` podía mostrar una caída inexistente. | `controlFlow.ts` construye bloques y aristas en el núcleo TAC; los terminadores no tienen sucesor y la UI consume el resultado probado. | `tac.test.ts`, `TacGenerationResult`, `TacVisualPanel`. |
+| Crítica | Constructores TAC | Una clase sin constructor emitía una llamada a una etiqueta inexistente y una hija con constructor heredado omitía sus campos propios. | Cada clase recibe un constructor TAC invocable; el constructor implícito encadena al padre, reenvía parámetros e inicializa los campos propios. | Regresiones de constructor implícito y herencia en `tac.test.ts`. |
 | Media | UI TAC | La cuarta fase no aparecía de forma consistente y la pestaña activa podía quedar fuera del ancho visible. | Pipeline ordenado Lexer → Parser → Semántica → TAC y barra desplazable que centra la pestaña activa. | Revisión automatizada del build en navegador. |
 
 ## Decisiones conservadas
@@ -81,15 +82,19 @@ Si lexer o parser producen errores, el análisis semántico no se ejecuta. Esta 
 
 | Archivo | Fase | Cantidad |
 | --- | --- | ---: |
-| `semantic/semanticAnalyzer.test.ts` | semántico | 68 |
+| `semantic/semanticAnalyzer.test.ts` | semántico | 84 |
 | `semantic/scopeManager.test.ts` | semántico | 4 |
 | `semantic/projectExamples.test.ts` | semántico | 8 |
 | `lexer.test.ts` | léxico | 5 |
 | `parser.test.ts` | sintáctico | 9 |
 | `rubric.examples.test.ts` | léxico + sintáctico | 8 |
 | `testCases.defaults.test.ts` | las cuatro fases + rúbrica | 16 |
-| `tac.test.ts` | código intermedio TAC y CFG | 15 |
-| Total | | 133 |
+| `tac.test.ts` | código intermedio TAC, CFG y constructores | 17 |
+| `downloads.test.ts` | exportación íntegra de resultados | 5 |
+| `nativeControls.test.tsx` | controles nativos y accesibilidad | 5 |
+| `tacVisual.test.tsx` | visualización de bloques y destinos | 3 |
+| `uiVariants.test.tsx` | variantes visuales de componentes | 3 |
+| Total | | 167 |
 
 Las pruebas semánticas incluyen programas válidos, diagnósticos `SEM001`–`SEM023`, flujo, arreglos, funciones, closures, herencia, constructores, identidad de clases, inferencia y referencias. La suite de ejemplos garantiza además que los archivos de exposición siguen siendo ejecutables y producen sus códigos documentados. Las pruebas directas de tabla de símbolos demuestran las cuatro operaciones solicitadas en la rúbrica: insertar, recuperar, actualizar y manejar alcances.
 

@@ -566,25 +566,108 @@ class TacGenerator {
   private classDeclaration(ctx: ClassDeclarationContext): void {
     const name = ctx.Identifier(0).text;
     this.withScope("class", name, ctx, () => {
-      const initializeFields = () => {
+      const initializeFields = (owner = this.readIdentifier("this", ctx)) => {
         for (const member of ctx.classMember()) {
           const variable = member.variableDeclaration();
           const constant = member.constantDeclaration();
           const expression = variable?.initializer()?.expression() ?? constant?.expression();
           const fieldName = variable?.Identifier().text ?? constant?.Identifier().text;
           if (!expression || !fieldName) continue;
-          const owner = this.readIdentifier("this", expression);
           const value = this.expression(expression);
           this.emit("SET_FIELD", { arg1: owner, arg2: tacOperand(fieldName, "symbol"), result: value }, expression);
-          this.release(owner);
           this.release(value);
         }
       };
+      const explicitConstructor = ctx.classMember()
+        .map((member) => member.functionDeclaration())
+        .find((fn) => fn?.Identifier().text === "constructor");
+
+      if (!explicitConstructor) this.implicitConstructor(ctx, name, initializeFields);
+
       for (const member of ctx.classMember()) {
         const fn = member.functionDeclaration();
-        if (fn) this.functionDeclaration(fn, fn.Identifier().text === "constructor" ? initializeFields : undefined);
+        if (fn) {
+          this.functionDeclaration(
+            fn,
+            fn.Identifier().text === "constructor" ? () => initializeFields() : undefined
+          );
+        }
       }
     });
+  }
+
+  /** Emite un constructor real para las clases que solo poseen el constructor
+   * implícito. La firma se hereda del constructor padre, tal como la valida la
+   * fase semántica, y los inicializadores propios se ejecutan después de él. */
+  private implicitConstructor(
+    ctx: ClassDeclarationContext,
+    className: string,
+    initializeFields: (owner?: TacOperand) => void
+  ): void {
+    const layout = this.classLayouts.find((candidate) => candidate.name === className);
+    const constructor = layout?.methods?.find((method) => method.name === "constructor");
+    if (!layout || !constructor) return;
+
+    const parentLayout = layout.parentClassId
+      ? this.classLayouts.find((candidate) => candidate.classId === layout.parentClassId)
+      : undefined;
+    const parentConstructor = parentLayout?.methods?.find((method) => method.name === "constructor");
+    const parameters = constructor.parameters ?? [];
+    const outerScopeId = this.currentScopeId;
+    const outerFrameId = this.currentFrameId;
+    const afterLabel = this.labels.next(`after_${className}_constructor`);
+    const frameId = `frame-implicit-${layout.classId}`;
+    const slots: FrameSlot[] = [];
+    let offset = 0;
+    const addParameter = (name: string, type: SemanticType): TacOperand => {
+      const size = storageSize(type);
+      const alignment = storageAlignment(type);
+      offset = alignUp(offset, alignment);
+      const operand: TacOperand = { kind: "symbol", value: name, frameId, offset, type };
+      slots.push({ name, kind: "parameter", type, offset, size, alignment });
+      offset += size;
+      return operand;
+    };
+    const owner = addParameter("this", T.instance(className));
+    const forwardedParameters = parameters.map((parameter) => addParameter(parameter.name, parameter.type));
+
+    this.frameById.set(frameId, {
+      id: frameId,
+      name: `${className}.constructor`,
+      kind: "constructor",
+      scopeId: outerScopeId,
+      parentFrameId: outerFrameId,
+      lexicalParentFrameId: outerFrameId,
+      parameterCount: slots.length,
+      parameterBytes: slots.reduce((sum, slot) => sum + slot.size, 0),
+      localBytes: 0,
+      temporaryBytes: 0,
+      totalBytes: alignUp(offset, 8),
+      slots,
+      staticLinkRequired: false
+    });
+
+    this.emit("GOTO", { arg1: tacOperand(afterLabel, "label") }, ctx);
+    this.currentFrameId = frameId;
+    this.temps.beginFrame(frameId);
+    const functionOperand = tacOperand(constructor.label, "symbol");
+    this.emit("FUNC_BEGIN", { result: functionOperand }, ctx);
+    if (parentConstructor) {
+      this.emit("PARAM", { arg1: owner }, ctx);
+      forwardedParameters.forEach((parameter) => this.emit("PARAM", { arg1: parameter }, ctx));
+      this.emit("CALL", {
+        arg1: tacOperand(parentConstructor.label, "symbol"),
+        arg2: tacOperand(forwardedParameters.length + 1)
+      }, ctx);
+    }
+    initializeFields(owner);
+    this.emit("RETURN", {}, ctx);
+    this.emit("FUNC_END", { result: functionOperand }, ctx);
+    this.temps.endFrame(frameId);
+    this.currentScopeId = outerScopeId;
+    this.currentFrameId = outerFrameId;
+    this.temps.beginFrame(outerFrameId);
+    this.emit("LABEL", { result: tacOperand(afterLabel, "label") }, ctx);
   }
 
   private expression(ctx: ExpressionContext): TacOperand {
@@ -994,9 +1077,25 @@ class TacGenerator {
         const label = `fn_${classSymbol.name}_${method.name}`;
         method.storage = { kind: "function", label };
         const inherited = methods.findIndex((entry) => entry.name === method.name);
-        const entry = { name: method.name, label, symbolId: method.id };
+        const entry = {
+          name: method.name,
+          label,
+          symbolId: method.id,
+          parameters: method.parameters?.map((parameter) => ({ ...parameter })) ?? []
+        };
         if (inherited >= 0) methods[inherited] = entry;
         else methods.push(entry);
+      }
+      if (!ownMembers.some((symbol) => symbol.kind === "method" && symbol.name === "constructor")) {
+        const inherited = methods.findIndex((entry) => entry.name === "constructor");
+        const inheritedConstructor = inherited >= 0 ? methods[inherited] : undefined;
+        const implicitConstructor = {
+          name: "constructor",
+          label: `fn_${classSymbol.name}_constructor`,
+          parameters: inheritedConstructor?.parameters?.map((parameter) => ({ ...parameter })) ?? []
+        };
+        if (inherited >= 0) methods[inherited] = implicitConstructor;
+        else methods.push(implicitConstructor);
       }
       const publicClassId = classSymbol.type.kind === "class" ? classSymbol.type.classId : classSymbol.id;
       const parentPublicId = parent?.type.kind === "class" ? parent.type.classId : parent?.id;

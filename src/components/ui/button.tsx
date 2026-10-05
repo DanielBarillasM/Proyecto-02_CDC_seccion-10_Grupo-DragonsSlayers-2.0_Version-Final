@@ -29,7 +29,7 @@ type ButtonStyleProps = {
 
 function buttonVariants({ variant = "default", size = "default", className }: ButtonStyleProps & { className?: string } = {}) {
   return cn(
-    "inline-flex shrink-0 items-center justify-center gap-2 rounded border-2 font-head text-sm font-medium whitespace-nowrap shadow-md transition-all outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:pointer-events-none disabled:opacity-50 active:translate-x-0.5 active:translate-y-0.5 active:shadow-none [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+    "inline-flex shrink-0 items-center justify-center gap-2 rounded border-2 font-head text-sm font-medium whitespace-nowrap shadow-md transition-[color,background-color,border-color,box-shadow,transform] outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:pointer-events-none disabled:opacity-50 active:translate-x-0.5 active:translate-y-0.5 active:shadow-none [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
     variantClasses[variant],
     sizeClasses[size],
     className

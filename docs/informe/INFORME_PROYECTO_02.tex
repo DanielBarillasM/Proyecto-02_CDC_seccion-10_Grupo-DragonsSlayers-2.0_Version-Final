@@ -132,8 +132,8 @@ directamente el resultado de esa fase semántica: recorre los mismos contextos
 tipados del parser y solo se ejecuta cuando lexer, parser y semántica terminan sin
 errores.
 
-La versión documentada reporta \textbf{133 pruebas aprobadas en 8 archivos}
-(incluyendo 15 pruebas dedicadas a TAC en \archivo{tac.test.ts}), comprobación
+La versión documentada reporta \textbf{167 pruebas aprobadas en 12 archivos}
+(incluyendo 17 pruebas dedicadas a TAC en \archivo{tac.test.ts}), comprobación
 TypeScript sin errores (\codigo{tsc --noEmit}) y build de producción exitoso. El alcance concluye en la representación
 intermedia: el proyecto no interpreta el programa ni produce ensamblador, código
 máquina o código objeto.
@@ -156,8 +156,8 @@ The generator produces deterministic temporaries with reuse and a live-set free
 list, label-based jumps, basic blocks and control-flow edges, per-function and per-class
 activation records with byte offsets and alignment, and class layouts covering
 inheritance and closures (\codigo{LOAD\_CAPTURE}, \codigo{STORE\_CAPTURE},
-\codigo{MAKE\_CLOSURE}). The implementation is validated by 133 automated tests
-across 8 files, including 15 tests exercising TAC generation directly, a passing
+\codigo{MAKE\_CLOSURE}). The implementation is validated by 167 automated tests
+across 12 files, including 17 tests exercising TAC generation directly, a passing
 TypeScript check, and a successful production build. This document focuses on the
 TAC design, its storage model and its verification evidence, referencing the
 Project 1 report for the frontend it builds upon.
@@ -514,7 +514,7 @@ compiscript-ide-work/
 |-- presentation/         presentación e imágenes
 |-- public/               recursos del frontend
 |-- src/
-|   |-- __tests__/        ocho archivos de prueba Vitest
+|   |-- __tests__/        doce archivos de prueba Vitest
 |   |-- cli/run.ts        cliente de consola
 |   |-- generated/        salida de ANTLR
 |   |-- grammars/         gramática fuente
@@ -604,7 +604,7 @@ el capítulo \emph{Generación de código intermedio (TAC)}.
 Tecnología & Versión & Responsabilidad \\
 \midrule
 TypeScript & 5.6 & motor y UI tipados \\
-ANTLR / antlr4ts & 4 / 0.5 alpha & lexer, parser, listener y Visitor \\
+ANTLR / antlr4ts & 4 / 0.5 alpha & lexer, parser y Visitor (sin listener generado) \\
 React & 19 & interfaz declarativa \\
 Vite & 6 & desarrollo y build web \\
 Vitest & 5.0 & pruebas \\
@@ -646,13 +646,14 @@ ejecución real del IDE.
 
 \section{Generación con ANTLR}
 
-El script \codigo{npm run generate} invoca \archivo{antlr4ts-cli} con generación de
-listener y Visitor. La salida se deposita en \archivo{src/generated}; incluye lexer,
-parser, interfaces y archivos auxiliares de vocabulario. La gramática permanece como
-fuente declarativa y el código generado puede reproducirse.
+El script \codigo{npm run generate} invoca \archivo{antlr4ts-cli} con generación del
+Visitor y sin listener de recorrido. La salida se deposita en
+\archivo{src/generated}; incluye lexer, parser, Visitor y archivos auxiliares de
+vocabulario. La gramática permanece como fuente declarativa y el código generado
+puede reproducirse.
 
 \begin{verbatim}
-antlr4ts -Xexact-output-dir -visitor -listener
+antlr4ts -Xexact-output-dir -visitor -no-listener
   -o src/generated src/grammars/Compiscript.g4
 \end{verbatim}
 
@@ -684,7 +685,8 @@ Campo & Significado \\
 
 \section{Normalización de errores léxicos}
 
-El listener predeterminado fue sustituido por \archivo{CollectingErrorListener}. En
+El listener de errores predeterminado fue sustituido por
+\archivo{CollectingErrorListener}. En
 lugar de escribir en consola, construye objetos localizables y traduce los mensajes.
 Fragmentos contiguos se agrupan: \codigo{@@@} produce un diagnóstico con ese símbolo,
 no tres mensajes equivalentes.
@@ -1488,12 +1490,20 @@ frame de \codigo{siguiente} tiene exactamente un slot \codigo{captured} y
 
 \section{Layouts de clases}
 
-\codigo{buildClassLayouts} (línea 953) calcula, por clase, el offset de cada campo,
+\codigo{buildClassLayouts} calcula, por clase, el offset de cada campo,
 las etiquetas de sus métodos (heredados incluidos) y el tamaño total de instancia.
 El \codigo{this} implícito se traduce como primer parámetro de todo método y
 constructor: las llamadas emiten \codigo{param} para el receptor antes que para los
 argumentos declarados, de forma que la aridad de \codigo{call} siempre incluye
 \codigo{this}.
+
+Toda clase posee además una etiqueta de constructor TAC propia. Si el código fuente
+no declara el método, \codigo{implicitConstructor} emite un constructor real y un
+registro de activación: primero reenvía receptor y parámetros al constructor padre
+cuando existe y después ejecuta los inicializadores de campos propios. Así,
+\codigo{new Hija(...)} nunca apunta a una etiqueta inexistente y una subclase sin
+constructor explícito conserva tanto la inicialización heredada como la propia. Dos
+regresiones automatizadas comprueban el caso base y el encadenamiento por herencia.
 
 \chapter{Bloques básicos y flujo de control}
 
@@ -1728,16 +1738,20 @@ garantizar que la demostración siga sincronizada.
 \toprule
 Suite & Cantidad & Cobertura principal \\
 \midrule
-\archivo{semanticAnalyzer.test.ts} & 68 & reglas semánticas y regresiones \\
-\archivo{tac.test.ts} & 15 & instrucciones, CFG, temporales, frames y bloqueo entre fases \\
+\archivo{semanticAnalyzer.test.ts} & 84 & reglas semánticas y regresiones \\
+\archivo{tac.test.ts} & 17 & instrucciones, CFG, temporales, frames, constructores y bloqueo entre fases \\
 \archivo{rubric.examples.test.ts} & 8 & matriz léxica/sintáctica heredada \\
 \archivo{projectExamples.test.ts} & 8 & archivos semánticos de demostración \\
 \archivo{parser.test.ts} & 9 & aceptación, CST y diagnósticos sintácticos \\
 \archivo{lexer.test.ts} & 5 & tokenización y diagnósticos léxicos \\
 \archivo{scopeManager.test.ts} & 4 & insertar, recuperar, actualizar y scopes \\
 \archivo{testCases.defaults.test.ts} & 16 & casos por defecto del panel "Pruebas", incluye TAC \\
+\archivo{downloads.test.ts} & 5 & integridad de exportaciones JSON \\
+\archivo{nativeControls.test.tsx} & 5 & controles nativos y accesibilidad \\
+\archivo{tacVisual.test.tsx} & 3 & bloques, destinos y estados de la vista TAC \\
+\archivo{uiVariants.test.tsx} & 3 & variantes visuales de componentes \\
 \midrule
-\textbf{Total} & \textbf{133} & ocho archivos de prueba aprobados (\codigo{npm test}) \\
+\textbf{Total} & \textbf{167} & doce archivos de prueba aprobados (\codigo{npm test}) \\
 \bottomrule
 \end{tabularx}
 \caption{Distribución de pruebas verificada para el Proyecto 2.}
@@ -1769,7 +1783,7 @@ la causa está en la estructura de scopes o en la construcción que la usa.
 
 \section{Pruebas semánticas}
 
-Los 68 casos cubren aceptación y rechazo para operadores, asignación, inicialización,
+Los 84 casos cubren aceptación y rechazo para operadores, asignación, inicialización,
 arreglos, llamadas, retornos, recursión, closures, control, miembros, constructores,
 herencia, identidad de clases, inferencia y referencias. El objetivo no es únicamente
 producir todos los códigos; cada regla tiene contexto válido para prevenir falsos
@@ -1823,7 +1837,7 @@ npm run build
 En esta revisión, \codigo{npm run generate} reproduce lexer, parser y visitor sin
 diferencias de contenido frente a los archivos versionados (el único diff bruto es
 de fin de línea CRLF/LF entre la máquina de origen y la de verificación); \codigo{npm
-run check} termina sin errores; \codigo{npm test} aprueba 133 casos en 8 archivos; y
+run check} termina sin errores; \codigo{npm test} aprueba 167 casos en 12 archivos; y
 \codigo{npm run build} finaliza correctamente. Vite emite una advertencia no
 bloqueante porque el bundle principal (Monaco incluido) supera 500 kB.
 
@@ -1835,7 +1849,7 @@ bloqueante porque el bundle principal (Monaco incluido) supera 500 kB.
 \toprule
 Criterio & Evidencia \\
 \midrule
-Corrección & reglas, generación TAC y 133 pruebas \\
+Corrección & reglas, generación TAC y 167 pruebas \\
 Reproducibilidad & gramática, lockfile y scripts \\
 Trazabilidad & códigos, ubicaciones, IDs y matriz \\
 Modularidad & separación lib/semantic/ui \\
@@ -1903,7 +1917,7 @@ Requisito & Evidencia & Estado \\
 Parser generado & gramática y \archivo{src/generated} & \estado{Cubierto} \\
 Recorrido Visitor & \archivo{semanticVisitor.ts} & \estado{Cubierto} \\
 Árbol visual & CST y árbol semántico & \estado{Cubierto} \\
-Casos de prueba & ocho archivos, 133 pruebas y ejemplos & \estado{Cubierto} \\
+Casos de prueba & doce archivos, 167 pruebas y ejemplos & \estado{Cubierto} \\
 Generación TAC & \archivo{src/tac} y bloqueo entre fases & \estado{Cubierto} \\
 Tabla de símbolos & \archivo{scopes.ts} y panel UI & \estado{Cubierto} \\
 IDE & React/Vite y Electron & \estado{Cubierto} \\
@@ -1916,19 +1930,34 @@ Contribuciones & historial real de Git & Revisión manual \\
 
 \section{Correspondencia ponderada}
 
-\begin{table}[H]
-\centering
-\begin{tabularx}{\textwidth}{l c Y}
+\begin{longtable}{p{0.31\textwidth}r p{0.51\textwidth}}
+\caption{Correspondencia ponderada con la rúbrica del Proyecto 2 (25 puntos).}
+\label{tab:rubric-p2}\\
 \toprule
-Componente & Puntos & Evidencia \\
+Criterio & Puntos & Evidencia \\
 \midrule
-IDE & 15 & editor, fases, resultados y exportaciones \\
-Parser y semántica & 60 & ANTLR, Visitor, tipos, diagnósticos, árboles y pruebas \\
-Tabla de símbolos & 25 & inserción, recuperación, actualización, scopes y closures \\
+\endfirsthead
+\toprule
+Criterio & Puntos & Evidencia \\
+\midrule
+\endhead
+Diseño de la representación intermedia & 3 & tipos TAC, opcodes, origen, scopes y frames \\
+Declaraciones y asignaciones & 1 & \codigo{MOV}, lvalues y almacenamiento resuelto \\
+Operaciones aritméticas & 1 & \codigo{ADD}, \codigo{SUB}, \codigo{MUL}, \codigo{DIV} y \codigo{MOD} \\
+Operaciones lógicas & 1 & \codigo{NOT} y cortocircuito mediante saltos \\
+Arreglos & 1 & creación, lectura, escritura y longitud \\
+Estructuras de control & 3 & etiquetas, saltos, bloques básicos y CFG \\
+Funciones y parámetros & 2 & \codigo{FUNC\_BEGIN}, \codigo{PARAM}, \codigo{CALL} y \codigo{RETURN} \\
+Recursión & 2 & etiqueta estable y registro de activación por función \\
+Clases y objetos & 2 & layouts, campos, métodos y constructor explícito o implícito \\
+Herencia & 2 & layout heredado y encadenamiento del constructor padre \\
+Manejo de excepciones & 2 & \codigo{TRY\_BEGIN}, \codigo{TRY\_END} y bloque \codigo{catch} \\
+Creación y reciclaje de temporales & 3 & allocator por frame, free list y métricas de reutilización \\
+Nuevas funciones de tabla de símbolos & 2 & offsets, actualización, referencias y manejo de scopes \\
+\midrule
+\textbf{Total} & \textbf{25} & \textbf{Implementación visible y 167 pruebas automatizadas} \\
 \bottomrule
-\end{tabularx}
-\caption{Correspondencia resumida con la rúbrica del Proyecto 1.}
-\end{table}
+\end{longtable}
 
 \section{Contribuciones}
 
@@ -2102,7 +2131,7 @@ mismo fuente; y todo frame con variables capturadas activa
 \codigo{staticLinkRequired}. Los tres ejemplos de error
 (\archivo{14\_error\_lexico.cps}, \archivo{15\_error\_sintactico.cps},
 \archivo{16\_error\_semantico.cps}) confirman que TAC se omite con la razón
-correcta cuando una fase anterior falla. Los ejemplos y 133 pruebas convierten los
+correcta cuando una fase anterior falla. Los ejemplos y 167 pruebas convierten los
 requisitos en evidencia repetible.
 
 \section{Limitaciones}
@@ -2177,7 +2206,7 @@ la entrada.
         pruebas.
   \item La visualización conjunta de CST, árbol semántico, scopes y símbolos convierte
         el IDE en una herramienta pedagógica.
-  \item Las 133 pruebas y los archivos de demostración permiten repetir la evidencia
+  \item Las 167 pruebas y los archivos de demostración permiten repetir la evidencia
         técnica y proteger regresiones.
   \item Bloquear TAC en \archivo{analyze.ts} cuando una fase anterior falla evita
         traducir árboles sin garantías de tipo y mantiene la razón de omisión
@@ -2392,7 +2421,7 @@ Comando & Propósito \\
 \codigo{npm run generate} & regenerar lexer, parser y visitor con ANTLR \\
 \codigo{npm run dev} & iniciar Vite \\
 \codigo{npm run check} & comprobar TypeScript \\
-\codigo{npm test} & ejecutar 133 pruebas en 8 archivos \\
+\codigo{npm test} & ejecutar 167 pruebas en 12 archivos \\
 \codigo{npm run test:examples} & ejecutar casos semánticos en disco \\
 \codigo{npm run build} & construir producción web \\
 \codigo{npm run preview} & servir el build \\
@@ -2456,7 +2485,7 @@ Tipos & primitivos, arreglos, funciones, clases e instancias \\
 Scopes & global, bloque, función, clase, ciclo, catch y switch \\
 Diagnósticos & \diag{SEM001}--\diag{SEM023} \\
 TAC & instrucciones tipadas, bloques, CFG, temporales, etiquetas, frames y layouts de clase \\
-Pruebas & 133 en 8 archivos (15 dedicadas a TAC) \\
+Pruebas & 167 en 12 archivos (17 dedicadas a TAC) \\
 Salidas & UI, CLI, CSV, JSON, TXT, TAC textual y árboles \\
 Plataforma empaquetada & Windows x64, macOS (x64/arm64) y Linux x64 mediante
   Electron Builder y workflow con runners nativos \\

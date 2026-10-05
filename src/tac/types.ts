@@ -91,7 +91,12 @@ export interface ClassLayout {
   classId: string;
   parentClassId?: string;
   fields: { name: string; offset: number; size: number; type: SemanticType }[];
-  methods?: { name: string; label: string; symbolId?: string }[];
+  methods?: {
+    name: string;
+    label: string;
+    symbolId?: string;
+    parameters?: { name: string; type: SemanticType }[];
+  }[];
   instanceSize: number;
 }
 

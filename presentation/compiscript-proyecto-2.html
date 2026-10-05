@@ -281,12 +281,12 @@
 
     <div class="slides" id="slides">
       <section class="slide hero-slide active" data-title="Portada">
-        <img src="assets/compiler-pipeline-neobrutalist.png" alt="Referencia visual neobrutalista del flujo de código hacia tokens, árbol y semántica.">
+        <img src="assets/compiler-pipeline-neobrutalist.png" width="1672" height="941" fetchpriority="high" alt="Referencia visual neobrutalista del flujo de código hacia tokens, árbol y semántica.">
         <div class="hero-copy">
           <span class="kicker">Construcción de Compiladores</span>
           <h1>Compiscript<br><span class="accent">Semantic &amp; TAC IDE</span></h1>
           <p class="lead">Frontend completo con ANTLR 4 y generación de código intermedio: temporales, bloques básicos, CFG, frames y layouts.</p>
-          <div class="chips"><span class="chip">ANTLR 4</span><span class="chip">React + Vite</span><span class="chip">TypeScript</span><span class="chip">TAC + CFG</span><span class="chip">133 pruebas</span></div>
+          <div class="chips"><span class="chip">ANTLR 4</span><span class="chip">React + Vite</span><span class="chip">TypeScript</span><span class="chip">TAC + CFG</span><span class="chip">167 pruebas</span></div>
         </div>
         <aside class="speaker-note">Presente el objetivo general: transformar un archivo .cps válido en TAC trazable, organizado en bloques y asociado con almacenamiento abstracto.</aside>
       </section>
@@ -353,7 +353,7 @@
           <div>
             <span class="kicker">04 · ANTLR</span>
             <h2>La gramática define la estructura; el visitor agrega significado</h2>
-            <p class="lead">ANTLR genera lexer, parser, listener y visitor TypeScript desde una gramática combinada.</p>
+            <p class="lead">ANTLR genera lexer, parser y Visitor TypeScript desde una gramática combinada; no se genera un listener de recorrido.</p>
             <div class="checklist">
               <div class="check"><b>1</b><span>Precedencia explícita de operadores</span><small>GRAMÁTICA</small></div>
               <div class="check"><b>2</b><span>Bloques obligatorios en estructuras de control</span><small>ALINEADO</small></div>
@@ -420,7 +420,7 @@ ifStatement
               <article class="card"><h3>enter / exit</h3><p>Construye el árbol de bloques, funciones, clases y ciclos.</p></article>
             </div>
           </div>
-          <img class="visual" src="assets/scopes-symbol-table-neobrutalist.png" alt="Referencia visual neobrutalista de ámbitos anidados conectados con la tabla de símbolos.">
+          <img class="visual" src="assets/scopes-symbol-table-neobrutalist.png" width="1672" height="941" loading="lazy" alt="Referencia visual neobrutalista de ámbitos anidados conectados con la tabla de símbolos.">
         </div>
       </section>
 
@@ -483,7 +483,7 @@ ifStatement
           <span class="kicker">11 · Calidad</span>
           <h2>La cobertura se demuestra con casos reproducibles</h2>
           <div class="grid-4">
-            <article class="card stat"><strong>133</strong><span>pruebas aprobadas</span><small>8 archivos Vitest</small></article>
+            <article class="card stat"><strong>167</strong><span>pruebas aprobadas</span><small>12 archivos Vitest</small></article>
             <article class="card stat"><strong>15</strong><span>pruebas TAC</span><small>IR + storage + CFG</small></article>
             <article class="card stat"><strong>23</strong><span>códigos semánticos</span><small>SEM001–SEM023</small></article>
             <article class="card stat"><strong>4</strong><span>operaciones de tabla</span><small>rúbrica directa</small></article>
@@ -503,7 +503,7 @@ ifStatement
             <article class="card"><span class="card-number">TEMPORALES</span><h3>Pool por frame</h3><p>Los temporales se liberan y reutilizan sin reciclar valores que continúen vivos.</p></article>
             <article class="card"><span class="card-number">BLOQUES</span><h3>CFG verificable</h3><p>Saltos y condiciones apuntan a bloques existentes; return finaliza el flujo.</p></article>
             <article class="card"><span class="card-number">FRAMES</span><h3>Offsets alineados</h3><p>Parámetros, locales, capturas y temporales reciben tamaño y desplazamiento abstracto.</p></article>
-            <article class="card"><span class="card-number">CLASES</span><h3>Layouts heredables</h3><p>Campos y métodos conservan offsets y etiquetas deterministas a través de herencia.</p></article>
+            <article class="card"><span class="card-number">CLASES</span><h3>Layouts heredables</h3><p>Campos y métodos conservan offsets; cada clase posee un constructor TAC invocable y la hija encadena al padre antes de inicializar sus campos.</p></article>
           </div>
         </div>
       </section>
@@ -573,7 +573,7 @@ npm run cli:tac</pre>
           <div class="grid-3">
             <article class="card"><h3>Correctitud</h3><p>Reglas centralizadas, ámbitos léxicos reales y diagnósticos estables.</p></article>
             <article class="card"><h3>Trazabilidad</h3><p>Del código fuente al símbolo, TAC, bloque, frame y offset.</p></article>
-            <article class="card"><h3>Demostrabilidad</h3><p>IDE, CLI, 133 pruebas, documentación, informe y releases reproducibles.</p></article>
+            <article class="card"><h3>Demostrabilidad</h3><p>IDE, CLI, 167 pruebas, documentación, informe y releases reproducibles.</p></article>
           </div>
           <div class="chips"><span class="chip">Grupo DragonsSlayers 2.0</span><span class="chip">Sección 10</span><span class="chip">Proyecto 2</span><span class="chip">Versión 2.0.0</span></div>
         </div>
